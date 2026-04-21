@@ -1,0 +1,2222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中晚唐朝代卡 · 视觉化</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #0f0e0c;
+    --card-bg: #1a1915;
+    --card-border: #2a2720;
+    --gold: #c9a84c;
+    --gold-dim: #8a7535;
+    --text: #e8e0d0;
+    --text-dim: #9a9080;
+    --red: #c04040;
+    --red-dim: #8a2020;
+    --yellow: #c9a030;
+    --orange: #c07030;
+    --black-phase: #505050;
+    --phase1: #c04040;
+    --phase2: #c9a030;
+    --phase3: #c07030;
+    --phase4: #505050;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    line-height: 1.7;
+    padding: 40px 20px 80px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .page-header {
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+  }
+  .page-header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 30px auto 0;
+  }
+  .page-header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .page-header .subtitle {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+  .page-header .range {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    color: var(--gold-dim);
+    margin-top: 8px;
+  }
+
+  /* PHASE DIVIDERS */
+  .phase-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 50px 0 30px;
+    padding: 0 10px;
+  }
+  .phase-divider .phase-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .phase-divider .phase-label {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .phase-divider .phase-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, currentColor, transparent);
+    opacity: 0.3;
+  }
+  .phase-divider .phase-years {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+    margin-bottom: 10px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 28px 26px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  .card.phase-1::before { background: linear-gradient(90deg, var(--phase1), transparent); }
+  .card.phase-2::before { background: linear-gradient(90deg, var(--phase2), transparent); }
+  .card.phase-3::before { background: linear-gradient(90deg, var(--phase3), transparent); }
+  .card.phase-4::before { background: linear-gradient(90deg, var(--phase4), transparent); }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .card-seq {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.15;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .card-keyword {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    background: rgba(201,168,76,0.1);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .card-emperor {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .card-emperor strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .card-summary {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    color: var(--gold);
+    opacity: 0.85;
+    padding: 12px 16px;
+    border-left: 2px solid var(--gold-dim);
+    margin-bottom: 16px;
+    background: rgba(201,168,76,0.03);
+    line-height: 1.8;
+  }
+
+  .card-section {
+    margin-bottom: 14px;
+  }
+  .card-section-title {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .card-section p {
+    font-size: 0.88rem;
+    line-height: 1.85;
+    color: var(--text);
+    opacity: 0.85;
+  }
+
+  /* People & Events tags */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-size: 0.78rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text);
+    opacity: 0.8;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tag:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+  .tag.person { border-color: rgba(100,180,255,0.2); color: #8cc4ff; }
+  .tag.person:hover { background: rgba(100,180,255,0.1); box-shadow: 0 2px 8px rgba(100,180,255,0.2); }
+  .tag.event { border-color: rgba(255,140,100,0.2); color: #ffaa80; }
+  .tag.event:hover { background: rgba(255,140,100,0.1); box-shadow: 0 2px 8px rgba(255,140,100,0.2); }
+
+  .card-game {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+    margin-top: 16px;
+    font-style: italic;
+    line-height: 1.7;
+  }
+  .card-game::before {
+    content: '🎮 ';
+  }
+
+  .card-ending {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  /* FOOTER */
+  .page-footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .page-header h1 { font-size: 1.6rem; }
+  }
+
+  /* ===== 弹窗样式 ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(201, 168, 76, 0.1);
+  }
+  .modal-overlay.active .modal-card {
+    transform: scale(1);
+  }
+  .modal-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--card-border);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover {
+    background: rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+  .modal-type {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .modal-type.person { color: #8cc4ff; }
+  .modal-type.event { color: #ffaa80; }
+  .modal-id {
+    font-size: 0.8rem;
+    color: var(--gold-dim);
+    margin-bottom: 4px;
+  }
+  .modal-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .modal-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .modal-tag {
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-dim);
+  }
+  .modal-body {
+    padding: 20px 28px 24px;
+  }
+  .modal-summary {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .modal-facts {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .modal-facts-title {
+    font-size: 0.78rem;
+    color: var(--gold-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .modal-facts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .modal-facts-list li {
+    font-size: 0.85rem;
+    color: var(--text);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    line-height: 1.6;
+  }
+  .modal-facts-list li:last-child {
+    border-bottom: none;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 28px 24px;
+    border-top: 1px solid var(--card-border);
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    text-decoration: none;
+  }
+  .modal-btn-primary {
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: #0a0908;
+    border: none;
+  }
+  .modal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+  }
+  .modal-btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--card-border);
+  }
+  .modal-btn-secondary:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--gold-dim);
+  }
+  .modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+  .modal-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .modal-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .modal-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>中晚唐朝代卡</h1>
+    <div class="range">755 安史之乱 ── 907 唐朝灭亡</div>
+    <div class="subtitle">13 位皇帝 · 152 年 · 从浩劫到终结</div>
+  </div>
+
+  <!-- ===== PHASE 1 ===== -->
+  <div class="phase-divider" style="color: var(--phase1);">
+    <div class="phase-dot" style="background: var(--phase1);"></div>
+    <div class="phase-label">第一阶段 · 浩劫与重建</div>
+    <div class="phase-line"></div>
+    <div class="phase-years">755 – 805</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Card 01 -->
+    <div class="card phase-1">
+      <div class="card-seq">01</div>
+      <div class="card-header">
+        <div class="card-title">至德 · 战火中的仓皇即位</div>
+      </div>
+      <div class="card-emperor"><strong>唐肃宗 李亨</strong>（756–762，7 年）</div>
+      <div class="card-summary">安史之乱的烽火中接过碎裂的帝国，靠回纥外援勉强收复两京，但代价是宦官干政的种子已经埋下。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>皇帝在逃难中登基。玄宗仓皇西逃蜀中，太子李亨在灵武自行称帝，父子信任断裂。为收复两京，肃宗向回纥借兵，开出"城中金帛女子归回纥"的惨烈条件。宦官李辅国在权力真空中崛起，甚至敢对太上皇玄宗迁宫。整个朝廷弥漫急于求成的焦虑——叛军未彻底剿灭就急着班师，为安史余部死灰复燃留下隐患。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">李辅国 PER-37 · 首个掌权宦官</span>
+          <span class="tag person">郭子仪 PER-01 · 再造唐室</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">安史之乱 EVT-01（755–763）</span>
+          <span class="tag event">灵武即位 EVT-29（756）</span>
+        </div>
+      </div>
+      <div class="card-game">旧世界崩塌的起点。所有NPC的前史、所有废墟的来源、所有"曾经的盛唐"的怀念，都从这里开始。</div>
+    </div>
+
+    <!-- Card 02 -->
+    <div class="card phase-1">
+      <div class="card-seq">02</div>
+      <div class="card-header">
+        <div class="card-title">宝应 · 藩镇割据的种子萌发</div>
+      </div>
+      <div class="card-emperor"><strong>唐代宗 李豫</strong>（762–779，17 年）</div>
+      <div class="card-summary">名义上平定安史之乱，实际用"以藩制藩"的妥协换来表面和平，帝国从此进入藩镇割据的慢性病期。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>安史叛将投降后被原地封为节度使，河朔三镇成为国中之国。吐蕃趁乱攻入长安，皇帝再次出逃。宦官鱼朝恩、程元振势力膨胀。但刘晏以榷盐法和漕运改革为空虚国库续命，"以财政续命"成为中晚唐的生存模式。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">田承嗣 PER-07 · 河朔故事开创者</span>
+          <span class="tag person">刘晏 PER-10 · 理财天才</span>
+          <span class="tag person">郭子仪 PER-01 · 定海神针</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">河朔三镇形成 EVT-08</span>
+          <span class="tag event">吐蕃陷长安 EVT-04（763）</span>
+          <span class="tag event">刘晏财政改革 EVT-07</span>
+        </div>
+      </div>
+      <div class="card-game">确立游戏世界基本格局——中央弱、藩镇强、经济靠盐铁。割据势力、税卡关隘、盐商走私从这里开始。</div>
+    </div>
+
+    <!-- Card 03 -->
+    <div class="card phase-1">
+      <div class="card-seq">03</div>
+      <div class="card-header">
+        <div class="card-title">建中–贞元 · 削藩失败与艰难求存</div>
+      </div>
+      <div class="card-emperor"><strong>唐德宗 李适</strong>（779–805，26 年）</div>
+      <div class="card-summary">雄心勃勃削藩被叛军打出长安；此后变成疑心极重的守成之君，靠宦官掌军维持最后的控制力。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>前半生壮志未酬：削藩引发四镇联叛、泾原兵变，叛军攻入长安。此后不再信任武将，把神策军交给宦官，宫市和五坊小儿横行搜刮。但陆贽仍苦口婆心劝谏，杜佑完成《通典》，文化未因政治黑暗消亡。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">李泌 PER-27 · 道家隐士型宰相</span>
+          <span class="tag person">陆贽 PER-15 · 唐代最杰出谏臣</span>
+          <span class="tag person">浑瑊 PER-14 · 奉天保卫战</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">泾原兵变 EVT-13（783）</span>
+          <span class="tag event">奉天之难 EVT-14（783–784）</span>
+          <span class="tag event">神策军宦官化 EVT-09</span>
+        </div>
+      </div>
+      <div class="card-game">"理想主义撞上现实"的教科书。削藩失败的完整样本；宦官掌军制度在此定型。</div>
+    </div>
+
+  </div><!-- /cards-grid phase 1 -->
+
+
+  <!-- ===== PHASE 2 ===== -->
+  <div class="phase-divider" style="color: var(--phase2);">
+    <div class="phase-dot" style="background: var(--phase2);"></div>
+    <div class="phase-label">第二阶段 · 中兴与挫败</div>
+    <div class="phase-line"></div>
+    <div class="phase-years">805 – 846</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Card 04 -->
+    <div class="card phase-2">
+      <div class="card-seq">04</div>
+      <div class="card-header">
+        <div class="card-title">永贞 · 146 天的改革闪电</div>
+      </div>
+      <div class="card-emperor"><strong>唐顺宗 李诵</strong>（805，186 天）</div>
+      <div class="card-summary">一个中风的皇帝支持激进改革派，试图闪电战夺回被宦官侵蚀的皇权，146 天即被逼退位。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>顺宗在东宫时便与王叔文、柳宗元、刘禹锡密谋改革，即位后闪电推行：废宫市、罢贪官、试图收回神策军兵权。但顺宗已中风失语，宦官俱文珍联合藩镇以"皇帝病重"为由拥立太子，改革派被贬为"二王八司马"。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">王叔文 PER-17 · 革新总设计师</span>
+          <span class="tag person">柳宗元 PER-32 · 古文运动领袖</span>
+          <span class="tag person">刘禹锡 PER-31 · 诗豪</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">永贞革新 EVT-18（805）</span>
+          <span class="tag event">二王八司马之贬 EVT-18</span>
+        </div>
+      </div>
+      <div class="card-game">"改革者的悲剧"模板——有理想、有计划、有团队，但没有军事力量就注定失败。</div>
+    </div>
+
+    <!-- Card 05 -->
+    <div class="card phase-2">
+      <div class="card-seq">05</div>
+      <div class="card-header">
+        <div class="card-title">元和 · 中兴绝唱</div>
+      </div>
+      <div class="card-emperor"><strong>唐宪宗 李纯</strong>（805–820，15 年）</div>
+      <div class="card-summary">中晚唐唯一一次真正的中兴——铁腕削藩让藩镇重新称臣，但最终死于宦官之手。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>宪宗一改绥靖，逐一用兵：平西川刘辟、灭淮西吴元济、迫使河朔三镇归顺。"元和中兴"是一百五十年衰世中唯一的曙光。但宪宗晚年迷恋丹药，820年被宦官陈弘志弑杀——掌握禁军的宦官不只能废立天子，还能杀天子。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">裴度 PER-19 · 真宰相</span>
+          <span class="tag person">李愬 PER-20 · 雪夜入蔡州</span>
+          <span class="tag person">韩愈 LIT-02 · 古文运动旗帜</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">元和削藩 EVT-19</span>
+          <span class="tag event">雪夜入蔡州 EVT-20（817）</span>
+          <span class="tag event">宪宗遇弑 EVT-21（820）</span>
+        </div>
+      </div>
+      <div class="card-game">"黄金时代的余晖"——短暂的希望感，但玩家知道这希望转瞬即逝。雪夜入蔡州是完美的关卡素材。</div>
+    </div>
+
+    <!-- Card 06 -->
+    <div class="card phase-2">
+      <div class="card-seq">06</div>
+      <div class="card-header">
+        <div class="card-title">长庆–宝历 · 快速滑坡</div>
+      </div>
+      <div class="card-emperor"><strong>穆宗 李恒</strong>（820–824）/ <strong>敬宗 李湛</strong>（824–827）</div>
+      <div class="card-summary">父子两代，一个沉迷享乐、一个痴迷马球，元和中兴成果七年内被挥霍殆尽。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>穆宗对削藩毫无兴趣，河朔三镇相继复叛。穆宗因丹药中风驾崩。敬宗更加荒唐，深夜外出打猎，827年被宦官弑杀。七年间从"中兴"急速滑向"彻底衰败"。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">牛僧孺 PER-36 · 党争主和派</span>
+          <span class="tag person">李德裕 PER-23 · 党争主战派</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">河朔三镇复叛 EVT-23（821–822）</span>
+          <span class="tag event">敬宗被弑 EVT-21（827）</span>
+        </div>
+      </div>
+      <div class="card-game">"中兴成果被浪费"的教训——"不要对朝廷抱有希望"。</div>
+    </div>
+
+    <!-- Card 07 -->
+    <div class="card phase-2">
+      <div class="card-seq">07</div>
+      <div class="card-header">
+        <div class="card-title">大和–开成 · 文臣最后的反击</div>
+      </div>
+      <div class="card-emperor"><strong>唐文宗 李昂</strong>（827–840，13 年）</div>
+      <div class="card-summary">联合朝臣策划"甘露之变"伏杀宦官，惨败。从此宦官彻底凌驾于皇权之上。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>文宗秘密联合宰相李训和郑注策划政变，以"甘露降于金吾仗院"诱骗宦官仇士良，伏兵走漏风声，仇士良率神策军反杀。朝臣被株连千余人。文宗自比周赧王、汉献帝："今朕受制于家奴。"牛李党争全面白热化。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">李训 PER-44 · 殉难策划者</span>
+          <span class="tag person">郑注 PER-45 · 殉难策划者</span>
+          <span class="tag person">仇士良 PER-24 · 最大赢家</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">甘露之变 EVT-25（835）</span>
+          <span class="tag event">牛李党争白热化 EVT-24</span>
+        </div>
+      </div>
+      <div class="card-game">宫廷剧情的"核弹级"事件——策划政变、被反杀、血洗朝堂，所有宫斗元素在此达到顶峰。</div>
+    </div>
+
+    <!-- Card 08 -->
+    <div class="card phase-2">
+      <div class="card-seq">08</div>
+      <div class="card-header">
+        <div class="card-title">会昌 · 铁腕宰相的六年</div>
+      </div>
+      <div class="card-emperor"><strong>唐武宗 李炎</strong>（840–846，6 年）</div>
+      <div class="card-summary">宰相李德裕铁腕执政——压制藩镇、灭佛充财、北击回鹘——但武宗死于丹药，一切终结。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>核心是李德裕。击败回鹘残部，推行"会昌灭佛"——二十六万僧尼还俗、寺院田产充国库，结束数十年党争。但武宗崇信道教迷恋金丹，年仅32岁暴亡，宦官趁机拥立宣宗。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">李德裕 PER-23 · 会昌中兴操盘手</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">会昌灭佛 EVT-26（845）</span>
+          <span class="tag event">北击回鹘 EVT-30（843）</span>
+          <span class="tag event">武宗丹药暴亡 EVT-31（846）</span>
+        </div>
+      </div>
+      <div class="card-game">佛道之争的极端案例。李德裕人设（世族/铁腕/被清算）极适合做NPC原型。</div>
+    </div>
+
+  </div><!-- /cards-grid phase 2 -->
+
+
+  <!-- ===== PHASE 3 ===== -->
+  <div class="phase-divider" style="color: var(--phase3);">
+    <div class="phase-dot" style="background: var(--phase3);"></div>
+    <div class="phase-label">第三阶段 · 回光返照与溃烂</div>
+    <div class="phase-line"></div>
+    <div class="phase-years">846 – 875</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Card 09 -->
+    <div class="card phase-3">
+      <div class="card-seq">09</div>
+      <div class="card-header">
+        <div class="card-title">大中 · "小太宗"的回光返照</div>
+      </div>
+      <div class="card-emperor"><strong>唐宣宗 李忱</strong>（846–859，13 年）</div>
+      <div class="card-summary">被当作傀儡推上台的"痴呆皇子"，即位后展现惊人手腕，打造中晚唐最后的太平——但只是回光返照。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>装疯多年避祸，即位后铁腕：清洗李德裕一党，重用令狐绹，勤政节俭，被称"小太宗"。大中年间百姓生活最安稳，但藩镇割据和宦官掌军根本未变。裘甫起义（859）预示底层不满即将爆发。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">令狐绹 PER-59 · 维持平衡的宰相</span>
+          <span class="tag person">宣宗本人 PER-34 · 最善伪装的政治家</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">大中之治 EVT-27（846–859）</span>
+          <span class="tag event">裘甫起义 EVT-32（859）</span>
+        </div>
+      </div>
+      <div class="card-game">"暴风雨前的宁静"——看似太平，实则危机四伏。适合做玩家进入游戏世界的初始体验。</div>
+    </div>
+
+    <!-- Card 10 -->
+    <div class="card phase-3">
+      <div class="card-seq">10</div>
+      <div class="card-header">
+        <div class="card-title">咸通 · 无声的溃烂</div>
+      </div>
+      <div class="card-emperor"><strong>唐懿宗 李漼</strong>（859–873，14 年）</div>
+      <div class="card-summary">沉溺享乐，没有戏剧性大事，但社会矛盾在无人过问中悄然溃烂到不可收拾。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>懿宗崇佛到狂热，迎佛骨入京铺张靡费空前。庞勋起义（868-869）——远戍桂林的徐州士兵哗变——暴露军事体系深层腐朽。无名臣、无改革、无中兴——只有静默的溃败。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">懿宗李漼 · 崇佛亡国之君</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">庞勋起义 EVT-33（868–869）</span>
+          <span class="tag event">迎佛骨入京 EVT-34（873）</span>
+        </div>
+      </div>
+      <div class="card-game">"衰败的日常"——NPC抱怨税重、商路不安全、当官的不管事，但还没天塌地陷。</div>
+    </div>
+
+  </div><!-- /cards-grid phase 3 -->
+
+
+  <!-- ===== PHASE 4 ===== -->
+  <div class="phase-divider" style="color: var(--phase4);">
+    <div class="phase-dot" style="background: var(--phase4);"></div>
+    <div class="phase-label">第四阶段 · 崩溃与灭亡</div>
+    <div class="phase-line"></div>
+    <div class="phase-years">875 – 907</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Card 11 -->
+    <div class="card phase-4">
+      <div class="card-seq">11</div>
+      <div class="card-header">
+        <div class="card-title">乾符–广明 · 帝国的自毁</div>
+      </div>
+      <div class="card-emperor"><strong>唐僖宗 李儇</strong>（873–888，15 年）</div>
+      <div class="card-summary">十二岁即位的"斗鸡天子"，黄巢大起义攻入长安，皇帝再逃蜀中，帝国进入死亡倒计时。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>由宦官田令孜扶上皇位的少年，热衷斗鸡马球。875年黄巢起义，880年攻入长安称帝建"大齐"。朝廷起用沙陀族李克用和降将朱温平叛，这两股势力日后成为五代十国主角。884年平叛后帝国已名存实亡。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">黄巢 PER-25 · 盐贩起义领袖</span>
+          <span class="tag person">田令孜 PER-60 · 皇帝义父</span>
+          <span class="tag person">李克用 PER-61 · 沙陀族将领</span>
+          <span class="tag person">朱温 PER-35 · 降将→军阀</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">黄巢之乱 EVT-28（875–884）</span>
+          <span class="tag event">僖宗出奔蜀中 EVT-28（880）</span>
+        </div>
+      </div>
+      <div class="card-game">"末世灾变"级别事件——长安沦陷、皇帝出逃、叛军称帝。世界末日副本的历史素材。</div>
+    </div>
+
+    <!-- Card 12 -->
+    <div class="card phase-4">
+      <div class="card-seq">12</div>
+      <div class="card-header">
+        <div class="card-title">光启–天复 · 军阀混战的修罗场</div>
+      </div>
+      <div class="card-emperor"><strong>唐昭宗 李晔</strong>（888–904，16 年）</div>
+      <div class="card-summary">天下进入军阀全面混战——朱温、李克用、李茂贞互相攻伐，皇帝沦为棋子。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>昭宗有抱负但无力回天：朱温占中原腹地，李克用据河东，李茂贞割凤翔，王建据西川。903年朱温屠杀数百宦官，150年宦官专权以最血腥方式终结。905年白马驿之祸，三十余朝臣被投入黄河。904年昭宗被朱温弑杀。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">朱温 PER-35 · 终结者</span>
+          <span class="tag person">李克用 PER-61 · 最后对手</span>
+          <span class="tag person">崔胤 · 引狼入室</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">朱温屠杀宦官 EVT-28（903）</span>
+          <span class="tag event">白马驿之祸 EVT-35（905）</span>
+          <span class="tag event">昭宗被弑 EVT-28（904）</span>
+        </div>
+      </div>
+      <div class="card-game">"秩序彻底崩溃"的终局——没有善恶选择，只有生存选择。</div>
+    </div>
+
+    <!-- Card 13 -->
+    <div class="card phase-4">
+      <div class="card-seq">13</div>
+      <div class="card-header">
+        <div class="card-title">天祐 · 落幕</div>
+      </div>
+      <div class="card-emperor"><strong>唐哀帝 李柷</strong>（904–907，3 年）</div>
+      <div class="card-summary">13 岁的傀儡少年，在位三年，完成唐朝灭亡的最后手续。</div>
+      <div class="card-section">
+        <div class="card-section-title">时代风貌</div>
+        <p>唐朝只剩空壳。朱温控制一切，皇帝只是盖章工具。907年四月，哀帝被迫禅位，朱温建国号梁。哀帝被降封济阴王，次年被毒杀，年仅17岁。</p>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">关键人物</div>
+        <div class="tag-list">
+          <span class="tag person">朱温 PER-35 · 篡唐建梁</span>
+        </div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-title">标志事件</div>
+        <div class="tag-list">
+          <span class="tag event">唐朝灭亡 EVT-28（907）</span>
+        </div>
+      </div>
+      <div class="card-game">游戏世界的历史终点——旧世界不是轰然倒塌的，而是安静地被签了死亡证明。</div>
+    </div>
+
+  </div><!-- /cards-grid phase 4 -->
+
+
+  <div class="page-footer">
+    数据来源：中唐百科 · 上卷（EVT/PER 条目）+ 通用历史知识 · 2026-04-16 编制
+  </div>
+
+</div>
+
+<!-- 悬浮预览容器 -->
+<div id="preview-overlay" class="preview-overlay" style="display: none;">
+  <div class="preview-content">
+    <div class="preview-header">
+      <h3 id="preview-title">标题</h3>
+      <span class="preview-close" id="preview-close">&times;</span>
+    </div>
+    <div class="preview-body">
+      <div class="preview-section">
+        <strong>ID:</strong> <span id="preview-id">--</span>
+      </div>
+      <div class="preview-section">
+        <strong>类型:</strong> <span id="preview-type">--</span>
+      </div>
+      <div class="preview-section">
+        <strong>简述:</strong> <span id="preview-summary">--</span>
+      </div>
+      <div class="preview-section">
+        <strong>游戏设计建议:</strong> <span id="preview-game-tip">--</span>
+      </div>
+    </div>
+    <div class="preview-footer">
+      <button id="preview-jump-btn" class="preview-btn">跳转到中唐百科</button>
+      <button id="preview-close-btn" class="preview-btn secondary">关闭</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* 预览弹窗样式 */
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.preview-content {
+  background: var(--card-bg);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--card-border);
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.1), transparent);
+}
+
+.preview-header h3 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+  margin: 0;
+}
+
+.preview-close {
+  font-size: 2rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 8px;
+  user-select: none;
+}
+
+.preview-close:hover {
+  color: var(--gold);
+}
+
+.preview-body {
+  padding: 24px;
+}
+
+.preview-section {
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.preview-section strong {
+  color: var(--gold);
+  font-weight: 600;
+  min-width: 100px;
+  display: inline-block;
+}
+
+.preview-section span {
+  color: var(--text);
+}
+
+.preview-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.preview-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  color: var(--gold);
+  border-radius: 6px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-btn:hover {
+  background: rgba(201, 168, 76, 0.2);
+  transform: translateY(-1px);
+}
+
+.preview-btn.secondary {
+  border-color: var(--text-dim);
+  color: var(--text-dim);
+  background: rgba(154, 144, 128, 0.1);
+}
+
+.preview-btn.secondary:hover {
+  background: rgba(154, 144, 128, 0.2);
+}
+
+/* 标签悬停效果增强 */
+.tag {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tag.person:hover {
+  background: linear-gradient(135deg, var(--phase1), #8a2020) !important;
+}
+
+.tag.event:hover {
+  background: linear-gradient(135deg, var(--phase2), #8a7535) !important;
+}
+
+/* 悬浮提示工具 - 增强版（挂载到body，不受overflow:hidden限制） */
+.global-tooltip {
+  position: fixed;
+  z-index: 99999;
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--gold, #c9a84c);
+  border-radius: 12px;
+  padding: 0;
+  font-size: 0.88rem;
+  color: var(--text, #e8e0d0);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 0 24px rgba(201, 168, 76, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
+  transform: translateY(5px);
+  min-width: 300px;
+  max-width: 420px;
+  pointer-events: none;
+}
+
+.global-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.global-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: var(--gold, #c9a84c) transparent transparent transparent;
+}
+
+/* 提示内容 */
+.tooltip-content {
+  padding: 16px 18px;
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.tooltip-type {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.tooltip-type.person {
+  background: rgba(100, 180, 255, 0.15);
+  color: #8cc4ff;
+}
+
+.tooltip-type.event {
+  background: rgba(255, 140, 100, 0.15);
+  color: #ffaa80;
+}
+
+.tooltip-id {
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  font-family: monospace;
+}
+
+.tooltip-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.tooltip-summary {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tooltip-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: var(--gold);
+  text-decoration: none;
+  padding: 6px 14px;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.tooltip-jump:hover {
+  background: rgba(201, 168, 76, 0.2);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+</style>
+
+<script>
+// 中唐百科数据 - 从 baike_entries.json 自动生成
+const encyclopediaData = {
+  'EVT-01': {
+    id: 'EVT-01',
+    title: '安史之乱平定（755-763）',
+    type: '事件',
+    summary: '安禄山、史思明父子发动的叛乱历时八年，虽最终平定，但唐朝中央权威跌至谷底——河朔旧部就地招安、藩镇割据格局由此奠定、人口锐减十之七八。',
+    game_tip: '安史之乱本身是\"前史\"（游戏开始前的背景），但它留下的伤痕——人口锐减、藩镇割据、朝野互不信任——是游戏世界的底层设定。所有NPC的行为逻辑（武将怕兔死狗烹、皇帝信宦官不信大臣、藩镇阳奉阴违）都可以追溯到这里。**具体机制**：可做成游戏开场的\"历史回忆\"教学关卡——玩家以旁观者视角快速经历安史之乱末尾的关键选择（招安还是清算？），选择结果直接决定游戏开始时的世界状态参数（藩镇敌意值、朝廷财政值、民心值）。',
+    category: 'EVT'
+  },
+  'EVT-02': {
+    id: 'EVT-02',
+    title: '代宗即位与铲除李辅国（762）',
+    type: '事件',
+    summary: '唐代宗在宫廷政变中登基，随后以拉拢分化手段铲除权宦李辅国——深夜派人割去其首级和一臂，皇帝假装不知。宦官干政的序幕由此拉开。',
+    game_tip: '一场完美的宫廷权谋剧本——（1）太子在张皇后和宦官两股势力夹缝中求生；（2）皇帝利用宦官打宦官；（3）深夜暗杀+假装查案的表演。适合做成\"宫廷政治\"教学任务——教玩家中唐政治的第一课：在这里，没有人能被正面击败，只有被算计。',
+    category: 'EVT'
+  },
+  'EVT-03': {
+    id: 'EVT-03',
+    title: '来瑱事件（762-763）',
+    type: '事件',
+    summary: '山南东道节度使来瑱三次抗旨不遵后主动入朝谢罪，代宗先优待再暗杀——此事严重损害朝藩互信，成为仆固怀恩叛乱、李光弼抗命的直接导火索，是中唐\"多米诺骨牌式信任崩塌\"的第一块。',
+    game_tip: '这是一个\"因果链\"极其完整的故事——来瑱的死引发仆固怀恩叛乱、李光弼抗命、周智光跋扈……一块多米诺骨牌倒下，中唐政治信任基础全面崩塌。适合做成一条**因果链支线**：玩家在早期做出的某个选择（比如处死一个藩镇将领），会在后续数章中持续产生连锁反应。',
+    category: 'EVT'
+  },
+  'EVT-04': {
+    id: 'EVT-04',
+    title: '吐蕃攻陷长安（763）',
+    type: '事件',
+    summary: '宦官程元振隐瞒军情，吐蕃二十余万大军突袭长安。代宗仓皇出逃，郭子仪以四千溃兵加疑兵之计收复长安——200骑疑兵吓跑吐蕃二十万大军。',
+    game_tip: '极度戏剧性——（1）200骑疑兵吓跑20万大军；（2）城中少年夜间击鼓的地下抵抗；（3）马璘\"此将军不惜死\"的凤翔保卫战。可拆成三个连续关卡：疑兵计→城中地下行动→凤翔血战。同时这是\"信任危机\"的集中体现——关东诸侯坐视帝京陷落，这个世界没有人可以信任。**具体机制**：（a）疑兵计关卡：玩家指挥200骑在多个方向制造声势，选择\"分散佯攻\"还是\"集中虚张\"影响吐蕃判断成功率；（b）地下行动关卡：玩家在被占领的长安潜行招募少年义士，触发\"城中夜鼓\"事件——NPC招募数量决定心理战效果；（c）凤翔血战：限时护卫战，需顶住3波进攻直到吐蕃退兵。',
+    category: 'EVT'
+  },
+  'EVT-05': {
+    id: 'EVT-05',
+    title: '仆固怀恩叛乱（764-765）',
+    type: '事件',
+    summary: '安史之乱第一功臣仆固怀恩（家族46人殉国）被宦官与藩将联手构陷谋反，由朝廷忠臣变成叛将——三次联合吐蕃回纥入寇，最终暴病死于出征路上。代宗事后闷闷不乐：\"怀恩不反，为左右所误。\"',
+    game_tip: '中唐最大的悲剧人物之一——满门忠烈却被逼反。核心冲突：忠诚的极限在哪里？当朝廷不值得忠诚时，武将该怎么做？适合做成\"立场抉择\"主线任务：玩家扮演仆固怀恩身边的人，在\"入朝=来瑱\"和\"不入朝=叛国\"之间做选择。仆固怀恩母亲追杀儿子的场面极其有张力。',
+    category: 'EVT'
+  },
+  'EVT-06': {
+    id: 'EVT-06',
+    title: '郭子仪单骑退回纥与灵台西原大捷（765）',
+    type: '事件',
+    summary: '仆固怀恩死后，吐蕃回纥等数十万联军失去统帅但仍继续入寇。郭子仪免胄释甲、仅带数骑入回纥大营，说服回纥可汗反戈，联合击破吐蕃于灵台西原——\"一人退百万兵\"的外交传奇。',
+    game_tip: '终极高潮戏——（1）浑瑊200骑劫营10万敌军的战斗关卡；（2）郭子仪\"是强行打还是冒死谈判\"的抉择；（3）单骑入营的外交谈判关卡（说服药葛罗反戈需要选对话术）。这场战役证明中唐最强大的武器不是兵力，而是郭子仪的个人威望和政治判断力。',
+    category: 'EVT'
+  },
+  'EVT-07': {
+    id: 'EVT-07',
+    title: '刘晏理财与漕运疏通（764-780）',
+    type: '事件',
+    summary: '刘晏8岁神童、以\"理财以爱民为先\"理念疏通汴水漕运、改革盐铁专卖，每年多运数十万担粮，被代宗称为\"朕的萧何\"——是中唐经济从崩溃边缘挽回的关键人物。',
+    game_tip: '适合做\"经济系统\"的背景知识——玩家接触漕运、盐铁、货币等经济要素时，可以引用刘晏的故事来说明中唐经济运转逻辑。',
+    category: 'EVT'
+  },
+  'EVT-08': {
+    id: 'EVT-08',
+    title: '河朔三镇成型（765-779）',
+    type: '事件',
+    summary: '魏博、成德、卢龙三镇自行任命官吏、截留赋税、父死子继，形成事实上的独立王国。朝廷无力清剿，中唐藩镇割据的核心格局由此奠定。',
+    game_tip: '河朔三镇是游戏世界中\"独立王国\"区域的历史原型——进入这些区域后，朝廷法令不通、赋税自留、节帅可以被牙兵杀死换人。适合做成\"法外之地\"的地图区域，规则与中央控制区完全不同。具体机制：（1）进入河朔区域后玩家的\"朝廷声望\"不生效，需要另建\"藩镇声望\"；（2）牙兵下克上事件可做成随机触发的NPC叛变任务；（3）田承嗣给安禄山立祠可做成一个引发道德选择的支线——拆祠得朝廷好感但惹怒本地势力。',
+    category: 'EVT'
+  },
+  'EVT-09': {
+    id: 'EVT-09',
+    title: '神策军崛起与鱼朝恩（763-770）',
+    type: '事件',
+    summary: '原为陇右边军，因吐蕃入侵由宦官鱼朝恩率领迎驾代宗，从此扩编为天子禁军——宦官掌握禁军兵权的制度化起点，中唐政治格局的底层逻辑由此改写。',
+    game_tip: '神策军是游戏中\"禁军系统\"的历史原型——玩家遇到的禁军不直接听命于皇帝，而是听命于宦官中尉。这个设定的历史来源就在这里。',
+    category: 'EVT'
+  },
+  'EVT-10': {
+    id: 'EVT-10',
+    title: '大历初年朝政格局（765-779）',
+    type: '事件',
+    summary: '代宗朝后期形成\"皇帝+元载（权相）+鱼朝恩（权宦）\"三角博弈格局。期间发生剑南崔旰之乱、周智光之乱、颜真卿被贬等事件，代宗以\"宽容姑息+暗中算计\"的方式维持局面，被后世评为\"李唐建国以来第一个正常即位的嫡长子\"和\"第一个既没杀子女也没被子女推翻的仁德之君\"。',
+    game_tip: '代宗朝后期是\"表面平静、暗流涌动\"的时代——适合做成游戏中\"和平时期的暗线\"：权相在算计宦官、宦官在监控武将、武将在观望朝廷、藩镇在闷声发大财。玩家在这种表面太平中逐渐发现暗中的各方角力。具体机制：（1）\"打金枝\"故事可改编为宫廷社交任务——玩家目睹驸马酒后失言，需选择帮谁遮掩；（2）元载权相线可设计为\"情报收集→暗中举报→皇帝心腹密谋\"的多步骤隐蔽任务；（3）周智光之乱适合做成突发事件关卡——上级命令平叛但限时极短。',
+    category: 'EVT'
+  },
+  'EVT-11': {
+    id: 'EVT-11',
+    title: '两税法实施（780）',
+    type: '事件',
+    summary: '宰相杨炎在德宗建中元年推行两税法，将延续数百年的以\"丁身\"为本的租庸调制改为以\"资产\"为宗，每年夏秋两征——这是中国税制史上划时代的变革，但仓促推出（从设计到颁布仅四个月），后遗症延续百年。',
+    game_tip: '两税法是中唐世界的经济底层规则——玩家在任何涉及钱财的交互中都会遇到它。可做支线：富户买通乡吏篡改户等→穷人家破人亡→玩家介入调查；也可作为场景约束：NPC农民卖粮换铜钱时被商人压价。',
+    category: 'EVT'
+  },
+  'EVT-12': {
+    id: 'EVT-12',
+    title: '四镇之乱与建中削藩（781-786）',
+    type: '事件',
+    summary: '德宗即位之初雄心勃勃，趁成德节度使李宝臣死后试图收回人事任命权，引发河朔三镇联合反叛，继而牵连淮西李希烈，最终演变为\"四王二帝\"之乱——德宗被迫两度出逃，削藩大业功亏一篑。',
+    game_tip: '一场\"好心办坏事\"的政治灾难——玩家可以体验\"每一步决策看似合理但结果越来越糟\"的雪崩式剧情。核心设计思路：选择A（强硬削藩）和选择B（妥协安抚）都有代价，没有完美解。',
+    category: 'EVT'
+  },
+  'EVT-13': {
+    id: 'EVT-13',
+    title: '泾原兵变（783年10月）',
+    type: '事件',
+    summary: '德宗调泾原兵马东征，大军过长安时期待赏赐却一文不赏——士兵哗变攻入长安，德宗仓皇出逃奉天，叛军拥立朱泚称帝。一顿饭引发的灭国级危机。',
+    game_tip: '绝佳的\"蝴蝶效应\"剧情——一顿饭→兵变→皇帝出逃→叛军称帝→宦官掌军制度化→影响唐朝后100年。可做成反面案例式任务：玩家需要阻止一场即将爆发的兵变，核心不是打仗而是及时发放赏赐和安抚军心。间架税口号可作为场景氛围细节。',
+    category: 'EVT'
+  },
+  'EVT-14': {
+    id: 'EVT-14',
+    title: '奉天之难与罪己诏（783-784）',
+    type: '事件',
+    summary: '德宗困守奉天，叛军围城一月有余，箭矢射至御座之前。朔方军李怀光千里救驾——然后救驾功臣也反了。德宗再次出逃，发布《罪己诏》，性格180度翻转。',
+    game_tip: '张韶入城报信是一场极致的潜入任务——化装成平民混入敌军、趁机脱身、浑身中箭殉国。罪己诏则是大叙事的转折点：玩家经历九个月的奉天保卫战后，发现一切牺牲换来的只是\"既往不咎\"的妥协。',
+    category: 'EVT'
+  },
+  'EVT-15': {
+    id: 'EVT-15',
+    title: '李怀光叛乱与朔方军衰落（784-785）',
+    type: '事件',
+    summary: '朔方军名将李怀光从救驾功臣变为叛臣，最终被马燧攻心之术击败自杀——朔方军四十余年的辉煌就此终结，从天下第一功勋部队沦为二流藩镇。',
+    game_tip: '\"忠良变叛臣\"的悲剧——适合做成道德抉择支线：玩家以朔方军士兵的视角经历从救驾到反叛的全过程，核心冲突是\"服从叛将还是回归朝廷\"。马燧的攻心喊话是精彩的对话设计参考。',
+    category: 'EVT'
+  },
+  'EVT-16': {
+    id: 'EVT-16',
+    title: '李晟收复长安（784年5月）',
+    type: '事件',
+    summary: '在德宗流亡梁州、李怀光反叛的至暗时刻，神策军将领李晟率军收复长安，斩杀朱泚余党——这是中唐的又一次\"逆风翻盘\"，也是神策军崛起为天子禁军的关键战役。',
+    game_tip: '至暗时刻的逆转——适合做高潮关卡。可从李晟视角设计\"以少胜多\"的攻城战，也可从长安百姓视角写\"被占领的长安\"生活（→ 场景素材）。**具体机制**：（a）攻城战关卡：玩家作为李晟麾下指挥官，需选择进攻路线（东渭桥正面突破/侧翼迂回/夜间奇袭），不同选择影响伤亡率和百姓欢迎度；（b）百姓视角支线：玩家在叛军占领期间扮演长安市民，完成\"藏粮-传信-接应王师\"三段式任务，最终触发\"夹道欢迎\"结局动画。',
+    category: 'EVT'
+  },
+  'EVT-17': {
+    id: 'EVT-17',
+    title: '贞元政治与德宗敛财（785-805）',
+    type: '事件',
+    summary: '泾原兵变后德宗性格巨变：对藩镇全面姑息、对宦官全面放权、对百姓疯狂搜刮——"愁叹之声遍于天下"，却客观上为宪宗元和中兴积攒了雄厚家底。',
+    game_tip: '这段时期定义了中唐世界的\"日常基调\"——表面太平、暗流涌动、百姓困苦、朝廷腐败。间架税是绝佳的世界观细节（NPC抱怨\"房梁多了要多交税\"），赵光奇的故事可改编为支线任务。',
+    category: 'EVT'
+  },
+  'EVT-18': {
+    id: 'EVT-18',
+    title: '永贞革新（805）',
+    type: '事件',
+    summary: '顺宗即位后以王叔文为核心发动改革——罢宫市、禁进奉、打击贪官——但因皇帝中风瘫痪，同时得罪宦官、藩镇、朝臣三方，仅146天即告失败。',
+    game_tip: '一场教科书式的\"改革悲剧\"——政策全对、程序全错。核心戏剧张力：（1）皇帝瘫痪导致改革者无法获得真正授权；（2）空降干部同时得罪三方势力等于自杀；（3）夺神策军兵权的\"奈何奈何\"场景极具戏剧感；（4）宦官偷入内殿让病糊涂的皇帝点头——一个点头亡一场改革。适合做成\"失败的改革\"支线任务，让玩家体会中唐政治的\"死局\"：不改革是慢性死亡，改革是加速死亡。',
+    category: 'EVT'
+  },
+  'EVT-19': {
+    id: 'EVT-19',
+    title: '元和削藩·前期（806-812）',
+    type: '事件',
+    summary: '宪宗铁腕削藩，六年内平定剑南刘辟、夏绥杨惠琳、镇海李琦叛乱，迫使魏博田兴主动归顺——河朔三镇"铁板一块"被打开第一个缺口。',
+    game_tip: '元和前期是\"信心积累期\"——几次小胜证明削藩可行，魏博归顺更是意外之喜。但成德之败也敲响警钟：硬碰硬不一定赢。核心策略选择：是稳扎稳打逐个击破，还是趁热打铁一鼓作气？宪宗选了后者。**具体机制**：可设计为\"战略沙盘\"阶段——玩家在地图上选择先攻哪个藩镇（剑南/夏绥/成德/魏博），每次出兵消耗国库+时间，胜利提升朝廷威信值，失败降低。关键分支：魏博田兴归顺是随机事件（触发条件=朝廷威信≥阈值+田季安死亡），玩家需维持足够威信才能触发这个\"意外之喜\"。',
+    category: 'EVT'
+  },
+  'EVT-20': {
+    id: 'EVT-20',
+    title: '淮西之役与武元衡遇刺（814-817）',
+    type: '事件',
+    summary: '淮西吴元济自立，宰相武元衡被刺客当街斩首、裴度因毡帽幸免。裴度督师前线，李愬率九千精兵雪夜奇袭蔡州活捉吴元济——中唐最精彩的军事行动。',
+    game_tip: '中唐世界最高潮的军事剧情线——（1）武元衡街头遇刺可做成长安城\"恐怖袭击\"事件；（2）裴度因毡帽活命是绝佳的命运细节；（3）李愬雪夜袭蔡州是完美的\"孤军深入\"战术任务——不告诉士兵目标、监军当场痛哭、雪夜长途奔袭、敌人毫无准备。可做成游戏中最燃的战斗关卡。',
+    category: 'EVT'
+  },
+  'EVT-21': {
+    id: 'EVT-21',
+    title: '宪宗遇弑与元和落幕（820）',
+    type: '事件',
+    summary: '唐朝后期最有作为的皇帝，削藩成功、河朔归降——却因服食丹药中毒性格大变，被宦官弑杀于宫中。他一死局面立刻瓦解，证明"元和中兴"靠的是个人而非制度。',
+    game_tip: '最佳的\"盛极而衰\"剧本——（1）丹药中毒导致明君变暴君，是极好的角色弧线；（2）宦官弑君的\"激情犯罪\"说明中唐宫廷的日常暴力程度；（3）死后宦官内部清洗揭示了权力的真相——谁控制了凶案叙事，谁就控制了继承人；（4）穆宗即位后一切回到原点，证明个人英雄主义的极限。可做成主线大结局：无论玩家如何努力，系统性问题终将回归。',
+    category: 'EVT'
+  },
+  'EVT-22': {
+    id: 'EVT-22',
+    title: '牛李党争之源（808-820）',
+    type: '事件',
+    summary: '唐朝后期持续四十年的\"牛党vs李党\"之争，种子埋在元和年间——元和三年（808年）科举对策中，牛僧孺等考生批评时政，宰相李吉甫（李德裕之父）认为矛头指向自己，怒而奏请黜落考生；此后两派围绕对藩镇主和/主战的路线分歧，形成延续数代人的政治对立。',
+    game_tip: '牛李党争是理解中晚唐政治的\"背景音\"——几乎所有重大政策（对藩镇、对吐蕃、科举改革、对宦官态度）都受到两派博弈的影响。游戏中可设计为一个\"政治阵营系统\"：玩家每个选择都可能倾向某一方，影响后续剧情走向和NPC态度。',
+    category: 'EVT'
+  },
+  'EVT-23': {
+    id: 'EVT-23',
+    title: '长庆再叛与河朔丧失（821-822）',
+    type: '事件',
+    summary: '穆宗错误裁军+中央派员与河北将士文化冲突→魏博牙兵杀死归顺功臣田弘正→河朔三镇降而复叛——元和中兴一夜归零，证明宪宗的个人英雄主义未能解决藩镇割据的制度根基。',
+    game_tip: '（1）\"裁军酿祸\"是绝佳的政策模拟素材——好意的改革因不理解基层生态而适得其反；（2）文化冲突细节（煎舆、毁坟、截留军饷）可直接做成支线事件；（3）田弘正之死是\"归顺者的下场\"的典型悲剧——NPC信任了玩家所属阵营，最后被本阵营抛弃。',
+    category: 'EVT'
+  },
+  'EVT-24': {
+    id: 'EVT-24',
+    title: '牛李党争全面爆发（821-846）',
+    type: '事件',
+    summary: '牛党与李党围绕主和/主战路线反复贬斥近四十年，重大政策悉被党争绑架——维州事件中甚至为意气之争将战略要地还给吐蕃。文宗叹曰"去河北贼易，去朝廷朋党难"。',
+    game_tip: '（1）牛李党争是\"政治阵营系统\"的最佳蓝本——玩家每个选择都可能倾向某一方，影响后续NPC态度和剧情走向；（2）维州事件的荒诞性（将战略要地还给敌国只因党争）是极好的道德抉择素材；（3）李德裕的结局（功臣死于贬所）可做成主线人物的终章弧线。',
+    category: 'EVT'
+  },
+  'EVT-25': {
+    id: 'EVT-25',
+    title: '甘露之变（835）',
+    type: '事件',
+    summary: '文宗联合李训、郑注以"石榴树降甘露"诱杀宦官，因韩约"浑身筛糠"暴露而功败垂成——仇士良率神策军屠杀朝臣，文宗沦为傀儡，"朝堂为之一空"。',
+    game_tip: '（1）甘露之变是\"宫变失败\"的教科书剧本，韩约\"浑身筛糠\"的细节极有戏剧性；（2）仇士良\"一拳击倒李训\"可做成boss级对手；（3）计划失败的原因是\"同时打击多股力量、军权未解决、空降干部根基不深\"——可设计成策略关卡；（4）神策军关闭长安城门大屠杀的场景可做成末日氛围。**具体机制**：可设计为\"宫变策划\"多步骤任务——（a）准备阶段：玩家需完成3个前置任务（除陈弘志/毒杀王守澄/安插仇士良），每步成功解锁下一步但也提升宦官警觉值；（b）甘露陷阱关卡：玩家选择伏兵位置和诱饵方式，韩约\"紧张度\"是隐藏变量——若玩家未提前给韩约\"定心丸\"道具则100%暴露；（c）失败后的逃生关卡：神策军封城，玩家需在限时内逃出长安或藏匿。',
+    category: 'EVT'
+  },
+  'EVT-26': {
+    id: 'EVT-26',
+    title: '会昌灭佛（845）',
+    type: '事件',
+    summary: '武宗在李德裕辅佐下大规模毁寺还俗、铜佛熔铸为钱，两税户翻倍。同时波及摩尼教、景教。武宗短命，宣宗即位即翻盘。',
+    game_tip: '（1）灭佛背景下的寺院命运、僧人流亡可做支线；（2）经济视角——铜佛化为铜钱的\"财政炼金术\"；（3）摩尼教、景教被波及说明宗教多元性。**具体机制**：（a）\"灭佛执行官\"任务线：玩家受命拆毁寺院，每座寺院有选择——彻底拆毁（获大量铜钱+失民心）/部分保留（折中）/暗中放走僧人（获佛教势力好感但降朝廷信任）；（b）\"圆仁的逃亡\"支线：护送日本僧人穿越灭佛区域出境，沿途遭遇关卡盘查；（c）摩尼教地下据点探索：灭佛后摩尼教转入地下，玩家可发现隐藏的宗教势力支线。 - **志怪素材对照**：酉阳杂俎X7系多条涉及寺院灵异+佛教法力，可形成\"会昌灭佛前后\"的对比叙事。',
+    category: 'EVT'
+  },
+  'EVT-27': {
+    id: 'EVT-27',
+    title: '宣宗\"大中之治\"与最后回光（847-859）',
+    type: '事件',
+    summary: '善于"装孙子"的宣宗即位后贬逐李德裕，政治表面清明，外部压力骤减——但这是外部条件改善而非内部改革，宣宗死后唐朝迅速滑入终局。',
+    game_tip: '宣宗是\"隐忍型帝王\"的原型——表面木讷实则精明，可做成NPC类型设计参考。**具体机制**：（a）\"小太宗\"评价系统：宣宗朝的政治任务表面简单（无大战、无大变），但隐藏着\"虚假繁荣\"倒计时——玩家完成的每个\"治世任务\"只加表面稳定值，不减内部腐烂值；（b）\"贬逐李德裕\"道德选择：玩家执行贬官任务时目睹李德裕的绝望，选择\"加速执行\"或\"暗中缓刑\"影响后续牛李党争遗产清算线；（c）吐蕃崩溃事件触发\"西域回归\"探索任务——但玩家会发现回归的只是空城。',
+    category: 'EVT'
+  },
+  'EVT-28': {
+    id: 'EVT-28',
+    title: '黄巢起义与唐朝覆灭（875-907）',
+    type: '事件',
+    summary: '盐商黄巢席卷南北、攻入长安建"大齐"，腐化的神策军"十几万人屁用不顶"。黄巢败亡后藩镇升级为2.0版（朱温、李克用），907年朱温篡唐，唐朝终结。',
+    game_tip: '（1）黄巢的盐商-反贼身份转换是绝佳的角色原型；（2）神策军的腐化堕落可做成\"末日禁军\"主题——从精锐到废物只需两代人；（3）藩镇1.0→2.0的升级概念可作为游戏世界观的阶段性设计；（4）唐朝覆灭可做主线大结局——不是被某个敌人打败，而是被自己的三大痼疾拖垮。**具体机制**：（a）\"末日禁军\"副本：玩家在黄巢攻长安前检阅神策军，发现虚报兵额的\"富二代冒名\"系统——需在限时内清理空饷、征召真正的战士，但即使全力整顿仍无法挡住黄巢（预设失败结局，体现系统性腐烂不可逆）；（b）\"盐商崛起\"前传支线：玩家跟随年轻黄巢走私贩盐，体验私盐经济链并理解起义的经济根基；（c）大结局三选一：投靠朱温/追随李克用/隐退江湖，对应三种终局叙事。',
+    category: 'EVT'
+  },
+  'EVT-29': {
+    id: 'EVT-29',
+    title: '灵武即位（756）',
+    type: '事件',
+    summary: '安史之乱中太子李亨在未经玄宗授权的情况下于灵武自行即位为肃宗，开创"先斩后奏"夺位先例——此后宦官拥立皇帝的模式即由此发端，深刻改变了唐朝皇位继承的游戏规则。',
+    game_tip: '灵武即位是"非法即位"的原型——太子在战乱中自立，事后逼父亲追认。可设计为"夺位决策"关卡：玩家选择等待授权（错失战机）还是先斩后奏（获得军权但埋下宦官干政隐患）。',
+    category: 'EVT'
+  },
+  'EVT-30': {
+    id: 'EVT-30',
+    title: '北击回鹘（843）',
+    type: '事件',
+    summary: '回鹘汗国840年被黠戛斯击溃后残部南下侵扰唐朝边境，武宗朝在李德裕主持下果断出兵北击，大破回鹘残部——这是会昌年间除灭佛外最重要的军事胜利，也是唐朝中后期罕见的对外军事主动出击。',
+    game_tip: '北击回鹘是"衰世中的军事亮点"——可设计为限时战役副本，玩家需在李德裕的战略指导下协调边防军击退回鹘残部，胜利后解锁"会昌武功"成就。',
+    category: 'EVT'
+  },
+  'EVT-31': {
+    id: 'EVT-31',
+    title: '武宗丹药暴亡（846）',
+    type: '事件',
+    summary: '武宗李炎崇信道教、长期服食丹药，会昌六年（846）暴亡，年仅32岁。宦官马元贽趁机拥立"装傻充楞"的光王李忱为帝（宣宗），李德裕随即被贬——会昌中兴戛然而止，朝政方向彻底逆转。',
+    game_tip: '武宗之死是"丹药误国"的经典案例——可设计为"帝王养生"隐藏系统：服丹药短期加buff（精力+决断力），长期累积毒性值，超过阈值触发暴毙事件，引发朝局剧变。',
+    category: 'EVT'
+  },
+  'EVT-32': {
+    id: 'EVT-32',
+    title: '裘甫起义（859-860）',
+    type: '事件',
+    summary: '大中十三年（859），浙东人裘甫聚众起义，攻陷多县，朝廷调兵数月方才镇压。这是唐末农民起义的先声——"大中之治"表面繁荣下社会矛盾已不可遏制，此后庞勋起义、黄巢起义接踵而至。',
+    game_tip: '裘甫起义是"盛世裂缝"的信号——可设计为宣宗朝末期的预警事件：玩家在"太平盛世"中突然收到浙东叛乱情报，揭示虚假繁荣下的真实危机。',
+    category: 'EVT'
+  },
+  'EVT-33': {
+    id: 'EVT-33',
+    title: '庞勋起义（868-869）',
+    type: '事件',
+    summary: '咸通九年（868），远戍桂林的徐州士兵因朝廷拒绝换防而哗变，推庞勋为首领北归——沿途裹挟数万人，攻占徐州。朝廷调沙陀兵协助镇压，暴露军事体系深层腐朽，是黄巢起义的直接预演。',
+    game_tip: '庞勋起义的核心是"兵变"——远征军被朝廷抛弃后自行北归。可设计为"戍卒归乡"剧情线：玩家扮演远戍士兵，选择服从等死还是哗变求生，体验底层军人的绝望与愤怒。',
+    category: 'EVT'
+  },
+  'EVT-34': {
+    id: 'EVT-34',
+    title: '迎佛骨入京（873）',
+    type: '事件',
+    summary: '咸通十四年（873），懿宗不顾群臣反对，以极尽奢华的仪仗从法门寺迎佛骨舍利入长安——金银珠宝铺路、万人夹道跪拜，靡费空前。韩愈当年因谏迎佛骨被贬潮州，懿宗却变本加厉，迎佛骨后数月即驾崩。',
+    game_tip: '迎佛骨是"末世狂欢"的象征——可设计为大型场景事件：玩家目睹长安街头万人空巷的迎佛盛况，与城外饥民遍野形成强烈对比，触发"盛世幻灭"认知。',
+    category: 'EVT'
+  },
+  'EVT-35': {
+    id: 'EVT-35',
+    title: '白马驿之祸（905）',
+    type: '事件',
+    summary: '天祐二年（905），朱温在亲信李振怂恿下，于白马驿（今河南滑县）一夜屠杀裴枢等三十余名朝臣，投尸黄河——李振称"此辈自诩清流，投入黄河使为浊流"。唐朝文官系统至此彻底覆灭，篡唐再无阻碍。',
+    game_tip: '白马驿之祸是"文明断裂"的标志——可设计为终局前的黑暗事件：玩家无论如何选择都无法阻止屠杀，只能目睹最后一批士大夫被投入黄河，体验"秩序终结"的绝望感。',
+    category: 'EVT'
+  },
+  'PER-01': {
+    id: 'PER-01',
+    title: '郭子仪（697-781年）',
+    type: '人物',
+    summary: '中兴名将，历仕四朝、两度收复长安、单骑退回纥，功盖天下而能全身善终，被誉为\"再造唐室\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-02': {
+    id: 'PER-02',
+    title: '代宗李豫（726-779年，在位762-779）',
+    type: '人物',
+    summary: '安史之乱的亲历者与收拾者——以广平王身份名义统军收复两京（实际31岁），即位后面对吐蕃入侵、藩镇割据、宦官坐大三重危机，以退让换取生存，却也为后世埋下祸根。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-03': {
+    id: 'PER-03',
+    title: '李光弼（708-764年）',
+    type: '人物',
+    summary: '与郭子仪齐名的平乱名将，军事才能甚至在郭子仪之上，却因性格刚烈、不善自保，最终在猜忌与恐惧中病死徐州，功臣的另一种结局。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-04': {
+    id: 'PER-04',
+    title: '程元振（?-764年）',
+    type: '人物',
+    summary: '帮代宗登基的功臣宦官，靠废立之功掌握禁军大权，排挤功臣、隐匿军情，最终导致吐蕃攻陷长安，被流放而死。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-05': {
+    id: 'PER-05',
+    title: '仆固怀恩（?-765年）',
+    type: '人物',
+    summary: '铁勒族名将，安史之乱中战功仅次于郭子仪、李光弼，却因功高被疑、家族被灭、走投无路而反叛，联合吐蕃回纥数十万大军入侵中原，最终病死军中——一个被逼上绝路的悲剧人物。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-06': {
+    id: 'PER-06',
+    title: '来瑱（?-763年）',
+    type: '人物',
+    summary: '驻守襄阳的忠勇将领，安史之乱中坚守山南要冲，却被程元振诬陷谋反遭赐死——冤杀功臣的典型案例，直接削弱了中唐南线防御。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-07': {
+    id: 'PER-07',
+    title: '田承嗣（705-779年）',
+    type: '人物',
+    summary: '河朔三镇之一魏博节度使，安禄山旧部——不打仗、不缴税、不听调、自任官员、给安禄山立祠堂，代宗居然拿他没办法。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-08': {
+    id: 'PER-08',
+    title: '李宝臣（718-781年）',
+    type: '人物',
+    summary: '河朔三镇之一成德节度使，原为安禄山部将张忠志，降唐后被赐姓李。与田承嗣一样自行其是，但比田承嗣更谨慎——表面恭顺、实际独立。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-09': {
+    id: 'PER-09',
+    title: '鱼朝恩（722-770年）',
+    type: '人物',
+    summary: '代宗朝最跋扈的权宦——掌控神策军、兼判国子监（抢文人的地盘）、掘郭子仪祖坟（公然挑衅功臣）、隐匿边报（间接导致长安失守），最终在宫中宴会上被代宗伏兵击杀。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-10': {
+    id: 'PER-10',
+    title: '刘晏（716-780年）',
+    type: '人物',
+    summary: '中唐第一理财家，在安史之乱后百废待兴的废墟上重建了国家财政——疏通漕运、改革盐法、稳定物价，以一人之力续命唐朝经济。却在政斗中被杨炎构陷赐死。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-11': {
+    id: 'PER-11',
+    title: '德宗李适（742-805）',
+    type: '人物',
+    summary: '中唐最矛盾的皇帝——前半生雄心勃勃强行削藩、后半生灰心丧气全面姑息；少年时遭回纥当面殴杀随从的奇耻大辱，在位时被叛军逼得两度出逃；对百姓搜刮无度却客观上为宪宗中兴攒下家底。性格集中体现了\"百孙院培养出来的都是孙子\"的悲剧。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-12': {
+    id: 'PER-12',
+    title: '杨炎（727-781）',
+    type: '人物',
+    summary: '两税法的设计者，中国税制史上划时代的改革家——但同时也是一个睚眦必报的政客，以私怨构陷刘晏致死，最终自己也因专权被诛。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-13': {
+    id: 'PER-13',
+    title: '李晟（727-793）',
+    type: '人物',
+    summary: '中唐的\"白马将军\"——在朝廷最危急的时刻率军收复长安、平定朱泚之乱，被誉为德宗朝的再造之臣。出身陇右军系统，善用骑兵，性格刚烈。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-14': {
+    id: 'PER-14',
+    title: '浑瑊（736-800）',
+    type: '人物',
+    summary: '铁勒浑部出身的名将——200骑夜袭吐蕃10万大军、以少兵坚守奉天抵抗朱泚围攻，两次以寡击众，中唐最具传奇色彩的战将。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-15': {
+    id: 'PER-15',
+    title: '陆贽（754-805）',
+    type: '人物',
+    summary: '德宗朝最清醒的政治家，被誉为"唐之贾谊"——敢于犯颜直谏，泾原兵变中为德宗起草《罪己诏》，最终因奸臣构陷被贬忠州，抑郁而终。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-16': {
+    id: 'PER-16',
+    title: '顺宗李诵（761-806）',
+    type: '人物',
+    summary: '中唐最悲剧的皇帝——等了25年太子，即位当天已中风瘫痪；想改革弊政却无力亲政，在位不到一年即被宦官逼迫禅位，次年去世。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-17': {
+    id: 'PER-17',
+    title: '王叔文（753-806）',
+    type: '人物',
+    summary: '以围棋入翰林、以私交获太子信任、以理想驱动146天革新——然后同时得罪宦官、藩镇、朝臣三方，在皇帝瘫痪的绝境中全面失败，被贬赐死。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-18': {
+    id: 'PER-18',
+    title: '宪宗李纯（778-820）',
+    type: '人物',
+    summary: '唐朝后期最有作为的皇帝——继承德宗的充实府库和顺宗的失败教训，以个人才干和坚定意志在15年内平定几乎所有割据藩镇，一度恢复中央权威（\"元和中兴\"）。但他没有从制度上解决藩镇问题，晚年服丹药中毒性格大变，最终被宦官弑杀于宫中，功业转瞬化为泡影。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-19': {
+    id: 'PER-19',
+    title: '裴度（765-839）',
+    type: '人物',
+    summary: '元和中兴的灵魂人物、主战派宰相——在武元衡被刺杀后接任宰相、亲赴前线督师淮西、激励李愬完成雪夜袭蔡州的壮举。同日遇刺因厚毡帽保命（\"大棒子打在毡帽上，跌入路沟，刺客以为他死了没补刀\"），此后成为主战路线的精神领袖，李德裕被视为其政治继承人。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-20': {
+    id: 'PER-20',
+    title: '李愬（773-821）',
+    type: '人物',
+    summary: '元和中兴最耀眼的军事天才——\"雪夜袭蔡州\"的策划者和执行者，以9000精兵不要后方、不要补给、轻装奔袭敌军大本营，创造了中唐最经典的军事奇迹。其父李晟是德宗朝收复长安的名将，父子两代\"关键时刻挺身而出\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-21': {
+    id: 'PER-21',
+    title: '穆宗李恒（795-824）',
+    type: '人物',
+    summary: '元和中兴的终结者——宪宗之子，宦官拥立即位，能力低下，错误裁军导致河朔三镇降而复叛，一片大好局面瞬间归零。',
+    game_tip: '穆宗是\"盛极而衰\"剧本的下半场——证明个人英雄主义（宪宗）的极限。具体机制：（1）玩家在穆宗朝接到\"裁军令\"任务，需选择执行（引发牙兵暴动支线）还是抗命（得罪朝廷）；（2）张弘靖的文化冲突可做成\"新手政策官vs老牌军阀\"的社交对抗关卡；（3）田弘正被杀事件可设计为\"保护归顺NPC\"的限时护卫任务——失败则触发河朔全面叛离。',
+    category: 'PER'
+  },
+  'PER-22': {
+    id: 'PER-22',
+    title: '文宗李昂（809-840）',
+    type: '人物',
+    summary: '中唐最悲情的帝王——知道宦官是祸害却无力铲除，密谋甘露之变功败垂成，沦为傀儡后发出\"去河北贼易，去朝廷朋党难\"的绝望叹息，最终抑郁而死。',
+    game_tip: '文宗是\"被困帝王\"的绝佳原型——所有出路都被堵死（铲除宦官→没军权；联合朝臣→被党争撕裂；依赖空降干部→根基不深），可设计成主线中\"玩家辅佐却终究失败\"的NPC。',
+    category: 'PER'
+  },
+  'PER-23': {
+    id: 'PER-23',
+    title: '李德裕（787-850）',
+    type: '人物',
+    summary: '李党领袖、晚唐最后的铁腕宰相——出身五姓七家，鄙视科举进士，武宗朝掌权期间平定泽潞、推行会昌灭佛、恢复国力，却因宣宗上台被贬崖州（海南），客死蛮荒，留下\"独上高楼望帝京，鸟飞犹是半年程\"的绝唱。',
+    game_tip: '李德裕是\"功臣客死他乡\"类型的悲剧角色——从权力巅峰到海南荒岛，命运反转极度戏剧化。可做成主线中的导师型NPC，帮助玩家但最终被系统性力量碾碎。',
+    category: 'PER'
+  },
+  'PER-24': {
+    id: 'PER-24',
+    title: '仇士良（781-843）',
+    type: '人物',
+    summary: '甘露之变中识破阴谋的宦官boss——\"一拳击倒李训\"，挟持唐文宗逃入后宫，召集神策军大屠杀朝臣，堪称中唐宦官专权的巅峰人物。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-25': {
+    id: 'PER-25',
+    title: '黄巢（820-884）',
+    type: '人物',
+    summary: '盐商出身的起义领袖——挥兵攻入长安建立\"大齐\"政权，屠广州外商、终结唐朝贵族政治，是唐末最大的破坏者，也是旧秩序最彻底的终结者。',
+    game_tip: '黄巢的盐商→叛军领袖→称帝→败亡的完整弧线，是\"末世枭雄\"的绝佳剧情模板。**具体机制**：可设计为4幕式Boss叙事线——（a）第1幕\"私盐大亨\"：黄巢以商人身份出现，玩家可与其交易获取稀有物资；（b）第2幕\"席卷天下\"：黄巢转为敌对势力，玩家需选择抵抗/投靠/观望；（c）第3幕\"长安陷落\"：玩家在沦陷的长安中经历\"大齐\"统治，执行生存任务；（d）第4幕\"败亡\"：黄巢军瓦解，玩家选择追击/放走/招安残部影响后续军阀割据格局。',
+    category: 'PER'
+  },
+  'PER-26': {
+    id: 'PER-26',
+    title: '卢杞（?-785）',
+    type: '人物',
+    summary: '德宗朝最臭名昭著的奸相——长相奇丑（\"蓝面鬼\"）、心胸狭隘、睚眦必报。害死颜真卿、激成泾原兵变、差点害死救驾功臣李怀光——郭子仪接待他时把所有妾全赶走，怕她们笑他长相招来杀身之祸。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-27': {
+    id: 'PER-27',
+    title: '李泌（722-789）',
+    type: '人物',
+    summary: '中唐最传奇的政治家——少年即受玄宗赏识、安史之乱中为肃宗出谋划策、四度入朝四度隐退、晚年终于为德宗宰相。兼修道术，半隐半官，是唐代\"布衣宰相\"的典范。劝德宗\"政治不是用荣辱来衡量的，是用利益来衡量的\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-28': {
+    id: 'PER-28',
+    title: '颜真卿（709-784）',
+    type: '人物',
+    summary: '中唐第一书法家+第一硬骨头——安史之乱中独守河北、代宗朝屡遭贬斥、最终被卢杞借刀杀人送入敌营，76岁被李希烈缢杀。书法\"颜体\"、人格\"铁骨铮铮\"，二者合一。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-29': {
+    id: 'PER-29',
+    title: '武元衡（758-815）',
+    type: '人物',
+    summary: '元和中兴主战派宰相——因力主讨伐淮西，在清晨赴早朝途中被藩镇刺客在长安街头斩首，\"脑袋被人砍下来拿走了\"。他的死激起宪宗更大的削藩决心，裴度接任后最终平定淮西。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-30': {
+    id: 'PER-30',
+    title: '田弘正（764-821）',
+    type: '人物',
+    summary: '河朔三镇铁板一块被打开的唯一缺口——魏博大将田兴（赐名田弘正），在牙兵拥立后主动上报户籍、请求中央派官、送质子入京，是河朔系中罕见的\"向中央靠拢\"者。但穆宗裁军后被魏博牙兵杀害——\"归顺者的下场\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-31': {
+    id: 'PER-31',
+    title: '刘禹锡（772-842）',
+    type: '人物',
+    summary: '永贞革新\"二王八司马\"之一——以诗文讽刺权贵闻名，被贬23年不改其志。\"旧时王谢堂前燕，飞入寻常百姓家\"\"沉舟侧畔千帆过，病树前头万木春\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-32': {
+    id: 'PER-32',
+    title: '柳宗元（773-819）',
+    type: '人物',
+    summary: '永贞革新\"二王八司马\"之一——古文运动领袖（与韩愈并称\"韩柳\"），被贬永州、柳州后写下《永州八记》《捕蛇者说》等千古名篇，47岁客死柳州。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-33': {
+    id: 'PER-33',
+    title: '武宗李炎（814-846）',
+    type: '人物',
+    summary: '会昌灭佛的执行者、李德裕执政的搭档——虽由宦官仇士良拥立，但执政后展现出相当的政治魄力：重用李德裕平定泽潞叛乱、推行大规模灭佛增加财政收入。可惜在位仅6年即去世。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-34': {
+    id: 'PER-34',
+    title: '宣宗李忱（810-859）',
+    type: '人物',
+    summary: '唐朝最后的\"回光返照\"——善于伪装（武宗朝装傻充楞避祸），即位后贬逐李德裕、崇拜进士文化、政治表面清明。被后世称为\"小太宗\"，但实际上只是外部压力（吐蕃崩溃）带来的虚假繁荣。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-35': {
+    id: 'PER-35',
+    title: '朱温（852-912）',
+    type: '人物',
+    summary: '唐朝的终结者——原为黄巢部将，降唐后受封宣武节度使，以汴州为基地逐步消灭其他军阀，903年诛杀全部宦官，907年篡唐自立建后梁。\"藩镇2.0\"的代表——不像中唐藩镇满足于割据自保，而是要打天下。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-36': {
+    id: 'PER-36',
+    title: '牛僧孺（779-848）',
+    type: '人物',
+    summary: '牛党领袖——以科举进士身份入仕，主张对藩镇绥靖妥协，与李德裕反复斗争近四十年。维州事件中为打压李党的政绩而将战略要地还给吐蕃——\"因为这是李党的成就，我牛党看不惯\"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-37': {
+    id: 'PER-37',
+    title: '李辅国（704-762）',
+    type: '人物',
+    summary: '中唐宦官专权的开山鼻祖——拥立肃宗、代宗即位，权倾朝野到对皇帝说"大家但内里坐，外事听老奴处分"。代宗忍无可忍，深夜派人割去其首级和一臂。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-38': {
+    id: 'PER-38',
+    title: '元载（？-777）',
+    type: '人物',
+    summary: '代宗朝的\"政治白手套\"——善揣摩圣意、为代宗除掉鱼朝恩，是皇帝与宦官博弈中的棋子。但专权日久贪腐成性——抄家时搜出胡椒800石（数吨），成为中唐贪官的标志性符号。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-39': {
+    id: 'PER-39',
+    title: '李正己（733-781）',
+    type: '人物',
+    summary: '淄青（平卢）节度使——高丽人血统，原名李怀玉，中唐各藩镇内部第一次成功\"下克上\"的主角：以兵马使身份推翻前任侯希逸自立。控扼山东十五州，鼎盛时势力范围最大的藩镇之一。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-40': {
+    id: 'PER-40',
+    title: '李怀光（729-785）',
+    type: '人物',
+    summary: '朔方军名将——千里救驾奉天后因卢杞进谗不得赏赐，反被赐免死铁券而勃然大怒（\"凡疑臣反则赐券\"）转而叛乱，被马燧攻心术击败自杀——朔方军四十余年辉煌就此终结。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-41': {
+    id: 'PER-41',
+    title: '朱泚（742-784）',
+    type: '人物',
+    summary: '泾原兵变中被叛军拥立的\"伪帝\"——原为卢龙节度使朱滔之兄，已入朝为太尉受优待，本无反意，但被叛军裹挟称帝。围攻奉天失败后，被李晟收复长安时西逃，死于途中。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-42': {
+    id: 'PER-42',
+    title: '王守澄（？-835）',
+    type: '人物',
+    summary: '从穆宗到文宗朝最有权势的大宦官——参与了宪宗遇弑后的善后、拥立穆宗、掌控神策军十余年。最终被文宗利用李训、郑注步步蚕食而毒死——甘露之变的前奏。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-43': {
+    id: 'PER-43',
+    title: '李吉甫（758-814）',
+    type: '人物',
+    summary: '李德裕之父、宪宗朝宰相——牛李党争的前因人物。元和三年科举对策事件中，因考生（牛僧孺等）批评时政而怒告御状，由此与牛党结怨——父子两代人的政治对立从此开始。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-44': {
+    id: 'PER-44',
+    title: '李训（？-835）',
+    type: '人物',
+    summary: '甘露之变的主谋之一——牛党李逢吉的侄子，与郑注联手步步蚕食宦官势力，最终策划\"石榴树降甘露\"的诡计诱杀仇士良——因韩约\"浑身筛糠\"暴露而功败垂成，被仇士良一拳击倒后逃亡被杀。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-45': {
+    id: 'PER-45',
+    title: '郑注（？-835）',
+    type: '人物',
+    summary: '甘露之变的另一主谋——原为大宦官王守澄的红人（以医术获信任），后与李训联手反过来帮文宗铲除宦官。计划在凤翔以阅兵为名埋伏兵力，但李训抢先在长安动手导致计划脱节。甘露之变失败后在凤翔被监军宦官杀死。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-46': {
+    id: 'PER-46',
+    title: '马燧（726-795）',
+    type: '人物',
+    summary: '以攻心术闻名的中唐名将——平定李怀光叛乱时在城下喊话\"你们朔方将士四十余年功业最高\"，大批将士归降。凌烟阁功臣（德宗朝绘像凌烟阁），后因功高遭忌被夺兵权。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-47': {
+    id: 'PER-47',
+    title: '李希烈（？-786）',
+    type: '人物',
+    summary: '淮西节度使——\"四王二帝\"之乱中称帝（国号楚），缢杀76岁的颜真卿。最终被自己的部将陈仙奇毒杀。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-48': {
+    id: 'PER-48',
+    title: '吴元济（783-817）',
+    type: '人物',
+    summary: '淮西之役的核心对手——继承父亲吴少阳的节度使之位，拒绝朝廷任命引发淮西之战。在蔡州大本营被李愬雪夜奇袭活捉，押送京师斩首。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-49': {
+    id: 'PER-49',
+    title: '李师道（？-819）',
+    type: '人物',
+    summary: '淄青（平卢）末代节度使——派刺客在长安暗杀宰相武元衡、焚烧河阴转运仓，是淮西之役中幕后最危险的推手。淮西平定后朝廷讨伐淄青，李师道被部将刘悟杀死，淄青平卢镇结束割据历史。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-50': {
+    id: 'PER-50',
+    title: '张弘靖（760-824）',
+    type: '人物',
+    summary: '中央派往河北的文化冲突典型——坐华丽煎舆入卢龙、毁安禄山史思明坟墓（河北民间尊为\"二圣\"）、嘲笑武人\"重操几担强弓不如识几个字\"、截留20万贯军饷——四重作死直接引爆长庆再叛。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-51': {
+    id: 'PER-51',
+    title: '王伾（？-806）',
+    type: '人物',
+    summary: '永贞革新\"二王\"之一——以书法进入东宫为太子侍读，与王叔文搭档主导改革。但个人贪财——\"床做成空箱，贿赂往里扔，只进不出，晚上睡在钱上面\"。革新失败后被贬开州司马，病死贬所。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-52': {
+    id: 'PER-52',
+    title: '李宗闵（？-847）',
+    type: '人物',
+    summary: '牛党核心人物之一——与牛僧孺并为牛党双核，元和三年对策事件的当事人之一。在文宗朝两度为相，反复与李德裕对攻。最终在武宗朝被贬死。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-53': {
+    id: 'PER-53',
+    title: '敬宗李湛（809-827）',
+    type: '人物',
+    summary: '穆宗之子、中唐最荒唐的帝王——沉迷击球（马球）和狐狸猎，深夜带宦官打球娱乐，最终被宦官刘克明等弑杀于宫中，年仅18岁。在位三年毫无作为。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-54': {
+    id: 'PER-54',
+    title: '僖宗李儇（862-888）',
+    type: '人物',
+    summary: '黄巢起义时在位的皇帝——12岁即位、沉迷马球（自称\"马球状元\"）、被宦官田令孜掌控。黄巢攻入长安时仓皇逃往四川（唐朝皇帝第三次入蜀避难）。回到长安后不久去世。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-55': {
+    id: 'PER-55',
+    title: '昭宗李晔（867-904）',
+    type: '人物',
+    summary: '唐朝倒数第二位皇帝——有恢复皇权的意图和能力但已无力回天。先后被宦官和军阀挟持，903年朱温诛杀宦官集团，904年昭宗本人也被朱温杀害。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-56': {
+    id: 'PER-56',
+    title: '陈弘志（？-835前）',
+    type: '人物',
+    summary: '弑杀宪宗的宦官——因不堪宪宗（丹药中毒后暴躁）的殴打而在宫中将其杀死。于赓哲分析为\"冲动型犯罪/激情犯罪\"，而非宦官集团有预谋的行动。后被文宗借李训、郑注之手杀死（甘露之变前奏的第一步）。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-57': {
+    id: 'PER-57',
+    title: '张韶（？-783）',
+    type: '人物',
+    summary: '奉天之难中最壮烈的殉国者——李怀光的兵马使，化装成百姓混入叛军，被迫去填护城河，找机会跑到奉天城下大喊\"我朔方军使者也\"，城上放绳拉他上来时被叛军乱箭射杀，浑身中箭数十支而死。身上搜出李怀光救驾书信。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-58': {
+    id: 'PER-58',
+    title: '马璘（？-？）',
+    type: '人物',
+    summary: '凤翔保卫战的英雄——763年吐蕃攻陷长安后退兵途中围攻凤翔，镇西节度使马璘率千余精骑突入城中增援，\"单骑出马，身先士卒，奋击，斧斩千计而归\"。吐蕃说\"此将军不惜死\"，遂撤围。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'LIT-02': {
+    id: 'LIT-02',
+    title: '韩愈（768-824）',
+    type: '人物',
+    summary: '唐宋八大家之首、古文运动领袖——"文起八代之衰"，同时也是中唐最矛盾的人物：猛烈抨击佛骨崇拜，自己晚年却吃硫磺喂的鸡追求长生，最终因此丧命。',
+    game_tip: '',
+    category: 'LIT'
+  },
+  'PER-59': {
+    id: 'PER-59',
+    title: '令狐绹（795-879）',
+    type: '人物',
+    summary: '宣宗朝最重要的宰相——令狐楚之子、牛党核心。主政十余年维持"大中之治"平衡，因排斥恩师门生李商隐而被后世诟病为"忘恩负义"。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-60': {
+    id: 'PER-60',
+    title: '田令孜（？-893）',
+    type: '人物',
+    summary: '晚唐最有权势的宦官——僖宗称其为"阿父"，掌控神策军垄断朝政。黄巢攻入长安时挟帝入蜀，回銮后争盐利引发藩镇混战，最终被缢杀。',
+    game_tip: '',
+    category: 'PER'
+  },
+  'PER-61': {
+    id: 'PER-61',
+    title: '李克用（856-908）',
+    type: '人物',
+    summary: '沙陀族军阀"独眼龙"——镇压黄巢的关键力量，与朱温争霸二十余年。临终留三支箭遗命灭梁，其子李存勖灭后梁建后唐，五代十国由此开启。',
+    game_tip: '',
+    category: 'PER'
+  },
+};
+
+// 从标签文本中提取ID（匹配 PER-XX 或 EVT-XX 模式）
+function extractIdFromText(text) {
+  const match = text.match(/(PER|EVT|LIT)-\d+/);
+  return match ? match[0] : null;
+}
+
+// 跳转到百科详情页（兼容iframe和直接访问两种场景）
+function navigateToDetail(id) {
+  const detailPath = `/baike/detail/${id}`;
+  
+  // 检查是否在iframe中
+  if (window.parent !== window) {
+    // 在iframe中：先关闭父页面的modal，再导航父页面
+    try {
+      // 关闭父页面的modal
+      const parentModal = window.parent.document.getElementById('modal');
+      if (parentModal) {
+        parentModal.classList.remove('active');
+        const iframe = window.parent.document.getElementById('modal-iframe');
+        if (iframe) iframe.src = '';
+        window.parent.document.body.style.overflow = '';
+      }
+      // 导航父页面到百科详情
+      window.parent.location.hash = '#' + detailPath;
+    } catch (e) {
+      // 跨域限制时降级为新窗口打开
+      window.open(`../index.html#${detailPath}`, '_blank');
+    }
+  } else {
+    // 直接访问时，在新窗口打开主站详情页
+    window.open(`../index.html#${detailPath}`, '_blank');
+  }
+}
+
+// 显示预览弹窗
+function showPreview(id) {
+  const data = encyclopediaData[id];
+  if (!data) {
+    alert('未找到对应条目数据');
+    return;
+  }
+
+  // 更新弹窗内容
+  document.getElementById('preview-title').textContent = data.title;
+  document.getElementById('preview-id').textContent = data.id;
+  document.getElementById('preview-type').textContent = data.type;
+  document.getElementById('preview-summary').textContent = data.summary;
+  document.getElementById('preview-game-tip').textContent = data.game_tip;
+  
+  // 设置跳转按钮
+  const jumpBtn = document.getElementById('preview-jump-btn');
+  jumpBtn.onclick = function() {
+    navigateToDetail(data.id);
+    hidePreview();
+  };
+
+  // 显示弹窗
+  document.getElementById('preview-overlay').style.display = 'flex';
+}
+
+// 隐藏预览弹窗
+function hidePreview() {
+  document.getElementById('preview-overlay').style.display = 'none';
+}
+
+// 初始化标签点击事件
+function initTagInteractions() {
+  // 创建全局tooltip元素（挂载到body上，不受overflow:hidden限制）
+  const globalTooltip = document.createElement('div');
+  globalTooltip.className = 'global-tooltip';
+  globalTooltip.innerHTML = '<div class="tooltip-content"></div>';
+  document.body.appendChild(globalTooltip);
+  
+  let hideTimer = null;
+  let currentTag = null;
+  
+  // 显示tooltip的函数
+  function showTooltip(tag, id) {
+    clearTimeout(hideTimer);
+    currentTag = tag;
+    
+    // 填充tooltip内容
+    if (id && encyclopediaData[id]) {
+      const data = encyclopediaData[id];
+      const typeClass = data.type === '人物' ? 'person' : 'event';
+      const typeLabel = data.type === '人物' ? '人物' : '事件';
+      
+      globalTooltip.innerHTML = `
+        <div class="tooltip-content">
+          <div class="tooltip-header">
+            <span class="tooltip-type ${typeClass}">${typeLabel}</span>
+            <span class="tooltip-id">${id}</span>
+          </div>
+          <div class="tooltip-title">${data.title}</div>
+          <div class="tooltip-summary">${data.summary || '暂无简介'}</div>
+          <a href="javascript:void(0)" class="tooltip-jump" onclick="event.stopPropagation(); navigateToDetail('${id}');">
+            → 查看详情
+          </a>
+        </div>
+      `;
+    } else {
+      const tagText = tag.textContent.trim();
+      const name = tagText.split(' · ')[0] || tagText.split(' ')[0] || tagText;
+      globalTooltip.innerHTML = `
+        <div class="tooltip-content">
+          <div class="tooltip-title">${name}</div>
+          <div class="tooltip-summary">（暂无详细数据）</div>
+        </div>
+      `;
+    }
+    
+    // 计算位置：tooltip显示在tag上方
+    const tagRect = tag.getBoundingClientRect();
+    const tooltipWidth = globalTooltip.offsetWidth || 280;
+    
+    // 先让tooltip可见以获取实际高度
+    globalTooltip.style.left = '-9999px';
+    globalTooltip.style.top = '-9999px';
+    globalTooltip.classList.add('visible');
+    
+    const tooltipHeight = globalTooltip.offsetHeight;
+    
+    // 计算水平居中位置
+    let left = tagRect.left + (tagRect.width / 2) - (tooltipWidth / 2);
+    // 确保不超出屏幕左右边界
+    left = Math.max(10, Math.min(left, window.innerWidth - tooltipWidth - 10));
+    
+    // 计算垂直位置（tag上方）
+    let top = tagRect.top - tooltipHeight - 12;
+    
+    // 如果上方空间不够，显示在下方
+    if (top < 10) {
+      top = tagRect.bottom + 12;
+      // 调整箭头方向
+      globalTooltip.style.setProperty('--arrow-top', 'auto');
+    }
+    
+    globalTooltip.style.left = left + 'px';
+    globalTooltip.style.top = top + 'px';
+  }
+  
+  // 隐藏tooltip的函数
+  function hideTooltipDelayed() {
+    hideTimer = setTimeout(() => {
+      globalTooltip.classList.remove('visible');
+      currentTag = null;
+    }, 200);
+  }
+  
+  // tooltip自身的鼠标事件（允许用户点击tooltip中的链接）
+  globalTooltip.addEventListener('mouseenter', function() {
+    clearTimeout(hideTimer);
+  });
+  globalTooltip.addEventListener('mouseleave', function() {
+    hideTooltipDelayed();
+  });
+  
+  // 给所有.tag元素添加事件
+  const tags = document.querySelectorAll('.tag');
+  tags.forEach(tag => {
+    const tagText = tag.textContent.trim();
+    const id = extractIdFromText(tagText);
+    
+    // 鼠标悬停 - 显示tooltip
+    tag.addEventListener('mouseenter', function() {
+      this.style.zIndex = '100';
+      showTooltip(this, id);
+    });
+    
+    // 鼠标离开 - 延迟隐藏tooltip（给用户时间移到tooltip上）
+    tag.addEventListener('mouseleave', function() {
+      this.style.zIndex = '';
+      hideTooltipDelayed();
+    });
+    
+    // 点击事件 - 跳转到详情页
+    tag.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      if (id && encyclopediaData[id]) {
+        navigateToDetail(id);
+      } else {
+        const name = tagText.split(' · ')[0] || tagText.split(' ')[0];
+        console.log(`暂无数据: ${name}`);
+      }
+    });
+  });
+  
+  // 关闭按钮事件
+  document.getElementById('preview-close').addEventListener('click', hidePreview);
+  document.getElementById('preview-close-btn').addEventListener('click', hidePreview);
+  
+  // 点击弹窗外部关闭
+  document.getElementById('preview-overlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+      hidePreview();
+    }
+  });
+  
+  // 按ESC键关闭
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      hidePreview();
+    }
+  });
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', initTagInteractions);
+</script>
+
+</body>
+</html>

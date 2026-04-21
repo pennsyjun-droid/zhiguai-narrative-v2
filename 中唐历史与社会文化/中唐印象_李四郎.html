@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>李四郎：书卷中的理想</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  color: #e0d8c8;
+  font-family: 'Noto Serif SC', 'Source Han Serif CN', serif;
+  padding: 40px 60px;
+  line-height: 2.2;
+  font-size: 15px;
+}
+h1 {
+  font-size: 24px;
+  color: #d4af37;
+  margin-bottom: 8px;
+}
+.setting {
+  font-size: 14px;
+  color: #a89060;
+  margin-bottom: 30px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(212,175,55,0.2);
+}
+p {
+  margin-bottom: 14px;
+  text-indent: 2em;
+}
+.time-mark {
+  color: #d4af37;
+  font-weight: 600;
+  text-indent: 0;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.bold { font-weight: 600; }
+.dialogue { }
+.desc { }
+.term-link {
+  cursor: default;
+  color: #d4af37;
+  border-bottom: 1px dashed rgba(212,175,55,0.5);
+  transition: all 0.2s;
+}
+.term-link:hover {
+  border-bottom-color: #d4af37;
+}
+#term-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #2a2a3e;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 8px;
+  padding: 14px 16px;
+  width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: all 0.2s ease;
+}
+#term-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.tooltip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 6px;
+}
+.tooltip-summary {
+  font-size: 12px;
+  color: #c8c0b0;
+  line-height: 1.8;
+}
+@media (max-width: 768px) {
+  body { padding: 20px; font-size: 14px; }
+  #term-tooltip { width: 260px; }
+}
+</style>
+</head>
+<body>
+<h1>📚 李四郎：书卷中的理想</h1>
+<div class="setting">洛阳，约860年，夏</div>
+
+<p class="time-mark">卯时初</p>
+<p>李四郎正在读<span class="bold">《五经正义》</span>。</p>
+
+<p><span class="dialogue">"四郎！"</span></p>
+
+<p>同窗赵七郎风风火火地进来：<span class="dialogue">"快看！<span class="bold">元微之</span>的<span class="bold">《莺莺传》</span>，士子间传疯了！"</span></p>
+
+<p>李四郎接过手抄本翻开。</p>
+
+<p class="time-mark">辰时</p>
+<p>李四郎合上最后一卷。<span class="bold">崔莺莺</span>与<span class="bold">张生</span>的爱情，<span class="bold">元稹</span>的"始乱弃"自省。</p>
+
+<p><span class="dialogue">"怎么样？"</span>赵七郎急切地问。</p>
+
+<p>李四郎望向窗外，良久才开口：<span class="dialogue">"这比那些一味歌颂的书生，真实多了。"</span></p>
+
+<p class="time-mark">巳时</p>
+<p>他换了身干净的青布袍。去拜访<span class="bold">座主</span>，这是唐代<span class="bold">科举</span>的规矩——<span class="bold">考卷不糊名</span>，考官看得到考生姓名，所以提前拜见座主至关重要。</p>
+
+<p>他怀里揣着卷手抄的<span class="bold">《诗经》</span>——他花了三个晚上抄的。</p>
+
+<p>老人的宅子在城南。门房看了他一眼。</p>
+
+<p><span class="dialogue">"学生李四郎，求见座主。"</span></p>
+
+<p><span class="dialogue">"等着。"</span></p>
+
+<p>他站在门外，听到门里传来谈笑声——都是年轻人，语气从容，带着世家子弟特有的腔调。</p>
+
+<p>他们在拜见座主。带着<span class="bold">颜真卿</span>真迹，带着明前龙井，带着家世，带着人脉。</p>
+
+<p>等了一炷香时间，门开了。三个锦衣华服的年轻人走出来，谈笑风生。他们看了李四郎一眼，目光扫过他的青布袍，扫过他磨破的鞋，然后移开了。</p>
+
+<p>李四郎握紧了拳头。</p>
+
+<p><span class="dialogue">"进来吧。"</span></p>
+
+<p>他跟着老仆进了院子。书房在正屋，老人坐在窗边写字。</p>
+
+<p><span class="dialogue">"座主，李四郎求见。"</span></p>
+
+<p>老人抬起头，看了他一眼。</p>
+
+<p><span class="dialogue">"学生李四郎，拜见座主。"</span></p>
+
+<p><span class="dialogue">"坐。"</span>老人指了指对面的椅子，<span class="dialogue">"听说你还在备考？"</span></p>
+
+<p><span class="dialogue">"是。"</span></p>
+
+<p><span class="dialogue">"今年<span class="bold">科举</span>，"</span>老人放下笔，端起茶盏，轻轻吹了吹，<span class="dialogue">"策问可能会问'<span class="bold">藩镇</span>对策'。"</span></p>
+
+<p>李四郎心头一跳，赶紧从怀里掏出那卷手抄的《诗经》，双手奉上：</p>
+
+<p><span class="dialogue">"学生……学生抄了卷《诗经》，请座主指正。"</span></p>
+
+<p>老人接过，看了看：<span class="dialogue">"字不错。"</span>然后放在一边。</p>
+
+<p>李四郎心里一沉。他想起刚才那三个士族子弟送的颜真卿真迹。而他送的是手抄的《诗经》。</p>
+
+<p><span class="dialogue">"你若有什么独到见解，"</span>老人说，<span class="dialogue">"不妨大胆写。主考官<span class="bold">杜牧</span>最喜有胆识的年轻人。"</span></p>
+
+<p>李四郎站起来：<span class="dialogue">"谢座主指点。"</span></p>
+
+<p><span class="dialogue">"去吧。"</span></p>
+
+<p>他退出书房，走到门口时，听到书房里又传来谈笑声——还是世家子弟。</p>
+
+<p>他加快了脚步。</p>
+
+<p class="time-mark">午时</p>
+<p>李四郎在街边食摊吃<span class="bold">馎饦</span>。<span class="desc">面疙瘩在汤里沉沉浮浮，像他此刻的心绪</span>。邻桌坐着三个士族子弟——<span class="bold">清河崔氏、太原王氏、荥阳郑氏</span>，锦衣华服，连腰带上的玉佩，都是上好的和田玉，温润生光。</p>
+
+<p><span class="dialogue">"<span class="bold">杜牧</span>今年主考，"</span>崔家郎君说，<span class="dialogue">"他最近那首<span class="bold">《泊秦淮》</span>，你们看了么？"</span></p>
+
+<p>王家郎君笑了：<span class="dialogue">"商女不知亡国恨，隔江犹唱后庭花。这是在讽刺谁，大家心照不宣。"</span></p>
+
+<p>郑家郎君压低声音：<span class="dialogue">"听说<span class="bold">牛党</span>那边，已经派人去拜见杜牧了。咱们家也该准备准备，<span class="bold">考卷不糊名，座主的脸面，比文章重要。</span>"</span></p>
+
+<p><span class="dialogue">"正是，"</span>崔家郎君点头，<span class="dialogue">"我爹说了，让带两卷<span class="bold">颜真卿</span>真迹，再加三斤明前龙井。杜牧好这个。"</span></p>
+
+<p><span class="dialogue">"对了，"</span>王家郎君忽然想起什么，<span class="dialogue">"<span class="bold">吏部</span>张侍郎那边，也得走动走动。<span class="bold">礼部的门难进，吏部的路要通。</span>"</span></p>
+
+<p>三人说着，声音不高，但<span class="bold">那种世家特有的从容与默契，像一堵无形的墙，把李四郎隔在外面</span>。</p>
+
+<p>李四郎握着筷子的手，<span class="desc">指甲掐进了掌心</span>。</p>
+
+<p><span class="bold">考卷不糊名</span>——大唐科举，<span class="bold">明经</span>、<span class="bold">进士</span>试的卷子，都不糊名。考官看得到考生的姓名籍贯，所以家世、师承、人脉，往往比才学更重要。</p>
+
+<p>世风日下，士子们却只知道攀龙附凤，党同伐异。</p>
+
+<p class="time-mark">未时</p>
+<p>他托同乡举人引荐，得以在<span class="bold">国子监</span>旁听。<span class="bold">祭酒</span>正在讲"<span class="bold">两税法</span>利弊"。</p>
+
+<p><span class="dialogue">"……故<span class="bold">两税法</span>之行，本意均平，然执行之中，弊端丛生……"</span></p>
+
+<p>李四郎想起老家的<span class="bold">佃农</span>。他举起手。</p>
+
+<p>祭酒停下来：<span class="dialogue">"这位学子，有何见解？"</span></p>
+
+<p>李四郎站起来：<span class="dialogue">"学生以为，税法本为均平，但执行中层层加码，反成民害。当先整顿吏治，再谈税法改良。"</span></p>
+
+<p>祭酒微微点了点头。</p>
+
+<p class="time-mark">酉时</p>
+<p>同窗们聚在李四郎的小屋。赵七郎带来新抄的<span class="bold">《霍小玉传》</span>。</p>
+
+<p><span class="dialogue">"我念一段，"</span>他清了清嗓子，<span class="dialogue">"……玉乃侧身转面，斜视生良久，遂举杯酒酬地曰：'我为女子，薄命如斯！君是丈夫，负心若此！……我死之后，必为厉鬼，使君妻妾，终日不安！'"</span></p>
+
+<p>良久，赵七郎放下书卷：<span class="dialogue">"这世道，女子尚能为情舍命，我等读书人，岂能只为功名苟活？"</span></p>
+
+<p class="time-mark">戌时末</p>
+<p>同窗们散了。李四郎坐在窗边。</p>
+
+<p>窗外，月光如水。</p>
+
+<p>李四郎望着那轮明月，<span class="desc">圆圆的，满满的，像谁用银盘盛了一整个世界的清辉</span>。</p>
+
+<p>他想起<span class="bold">《莺莺传》</span>里的崔莺莺，<span class="bold">"待月西厢下，迎风户半开"</span>——那样炽烈的爱情，最终化为一声叹息。</p>
+
+<p>他想起<span class="bold">《霍小玉传》</span>里的霍小玉，<span class="bold">"我死之后，必为厉鬼"</span>——那样决绝的恨意，是用生命点燃的火焰。</p>
+
+<p>他想起座主的话：<span class="bold">"不妨大胆写。"</span></p>
+
+<p>他想起祭酒眼中的赞许：<span class="bold">那一闪即逝的星火。</span></p>
+
+<p>他想起同窗们挤在灯下的脸：<span class="bold">带着理想光芒的脸。</span></p>
+
+<p><span class="bold">灯油终于燃尽了。</span></p>
+
+<p><span class="bold">火苗挣扎了一下，然后，灭了。</span></p>
+
+<p><span class="bold">屋里陷入黑暗。</span></p>
+
+<p>但李四郎没有动。他坐在黑暗里，<span class="bold">眼睛却亮着——像两簇小小的火苗，在瞳孔深处，静静地燃烧。</span></p>
+
+<script src="term-tooltip.js"></script>
+</body>
+</html>
