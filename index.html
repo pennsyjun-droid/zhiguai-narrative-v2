@@ -7935,6 +7935,20 @@ const YYCZ_CATEGORIES = [
   { name: '博物·草木·禽兽', icon: '🌿', color: '#6bcb77', desc: '采集物、仙药、奇兽、驯鹰系统', chapters: '羽/毛/鳞介/虫篇、木/草篇、肉攫部、支动、支植上/下', chapterCount: 10, gameValue: '采集物、仙药、奇兽、驯鹰系统' },
 ];
 
+// 将篇章名字符串转为可点击跳转的链接
+function makeChapterLinks(chaptersStr) {
+  return chaptersStr.split('、').map(ch => {
+    // 去掉括号注释，如"黥（含雷、梦）"
+    const clean = ch.replace(/（含.*?）/, '').trim();
+    // 查找对应的篇章定义
+    const chDef = YYCZ_FULL_CHAPTERS.find(c => c.name === clean);
+    if (chDef && chDef.extracted > 0) {
+      return `<a href="javascript:void(0)" onclick="scrollToChapter('${chDef.name}')" style="color:var(--gold);text-decoration:none;border-bottom:1px dashed rgba(212,175,55,0.4);cursor:pointer;">${ch}</a>`;
+    }
+    return `<span style="color:var(--text-muted);opacity:0.6;">${ch}</span>`;
+  }).join('、');
+}
+
 function renderYyczOverview(container) {
   // 根据实际加载的数据动态计算每个篇章的提取数
   const actualData = DATA.story_yycz || [];
@@ -8000,7 +8014,7 @@ function renderYyczOverview(container) {
     html += `
           <tr>
             <td class="chapter-name" style="white-space:nowrap;"><span style="color:${cat.color};font-weight:700;">${cat.icon} ${cat.name}</span></td>
-            <td style="font-size:12px;color:var(--text-secondary);max-width:220px;line-height:1.5;">${cat.chapters}</td>
+            <td style="font-size:12px;max-width:220px;line-height:1.8;">${makeChapterLinks(cat.chapters)}</td>
             <td style="text-align:center;color:var(--text-muted);">${cat.chapterCount}</td>
             <td style="text-align:center;">${cat.total}</td>
             <td class="chapter-ratio">
@@ -8640,6 +8654,7 @@ function getSectionIcon(sectionKey) {
     'literary_motifs': '📚',
     'character_profiles': '👥',
     'game_elements': '🎮',
+    'game_design': '🎯',
     'legacy': '🎭',
     'notes': '✍️',
     'analysis': '🔍',
@@ -8665,6 +8680,7 @@ function getSectionSubtitle(sectionKey) {
     'literary_motifs': '文学母题',
     'character_profiles': '角色档案',
     'game_elements': '游戏可用元素',
+    'game_design': '游戏设计建议',
     'legacy': '后世传播',
     'detailed_summary': '详细内容',
     'notes': '注释与解析',
