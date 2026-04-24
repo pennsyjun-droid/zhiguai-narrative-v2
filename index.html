@@ -5262,17 +5262,18 @@ const MONSTER_CATEGORY_ORDER = [
   {name: '蛇蛟龙类', icon: '🐉'},
   {name: '鬼魂幽灵类', icon: '👻'},
   {name: '水族类', icon: '🐟'},
-  {name: '其他精怪', icon: '🎭'},
   {name: '狐狸类', icon: '🦊'},
   {name: '花木植物精', icon: '🌸'},
-  {name: '仙灵类', icon: '✨'},
+  {name: '仙灵/神仙类', icon: '✨'},
   {name: '虫豸类', icon: '🦗'},
   {name: '异形怪物', icon: '👾'},
   {name: '家畜杂兽类', icon: '🐖'},
   {name: '虎豹兽类', icon: '🐅'},
   {name: '猿猴类', icon: '🐒'},
   {name: '自然神怪', icon: '🌪️'},
-  {name: '器物成精', icon: '🏺'}
+  {name: '器物成精', icon: '🏺'},
+  {name: '鸟类/飞行类', icon: '🦅'},
+  {name: '其他精怪', icon: '🎭'}
 ];
 
 // 法术能力分类配置（MMO技能体系）
@@ -5486,6 +5487,18 @@ function renderCategoryIndex(data, cfg, categoryOrder) {
     groups[cat].push(row);
   });
   
+  // 按精彩度排序（⭐⭐⭐ > ⭐⭐ > ⭐）
+  function getStarScore(row) {
+    const stars = row['精彩度'] || '';
+    if (stars.includes('⭐⭐⭐')) return 3;
+    if (stars.includes('⭐⭐')) return 2;
+    if (stars.includes('⭐')) return 1;
+    return 0;
+  }
+  Object.keys(groups).forEach(cat => {
+    groups[cat].sort((a, b) => getStarScore(b) - getStarScore(a));
+  });
+  
   let html = '<div class="monster-categories-container">';
   
   categoryOrder.forEach(catInfo => {
@@ -5544,7 +5557,10 @@ function renderCategoryIndex(data, cfg, categoryOrder) {
         if (!subItems || subItems.length === 0) return;
         html += `
           <div class="subcategory-section">
-            <div class="subcategory-title">${subIcons[subName] || '📌'} ${subName}（${subItems.length}条）</div>
+            <div class="subcategory-title" onclick="toggleSubcategory(this)" style="cursor:pointer;user-select:none;">
+              <span>${subIcons[subName] || '📌'} ${subName}（${subItems.length}条）</span>
+              <span class="sub-toggle" style="margin-left:8px;font-size:12px;color:#888;transition:transform 0.2s;">▼</span>
+            </div>
             <div class="index-table-wrap">
               <table class="index-table">
                 <thead><tr>${showCols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
@@ -5577,7 +5593,10 @@ function renderCategoryIndex(data, cfg, categoryOrder) {
       if (otherItems.length > 0) {
         html += `
           <div class="subcategory-section">
-            <div class="subcategory-title">📌 其他（${otherItems.length}条）</div>
+            <div class="subcategory-title" onclick="toggleSubcategory(this)" style="cursor:pointer;user-select:none;">
+              <span>📌 其他（${otherItems.length}条）</span>
+              <span class="sub-toggle" style="margin-left:8px;font-size:12px;color:#888;transition:transform 0.2s;">▼</span>
+            </div>
             <div class="index-table-wrap">
               <table class="index-table">
                 <thead><tr>${showCols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
@@ -5644,6 +5663,21 @@ function renderCategoryIndex(data, cfg, categoryOrder) {
 function toggleMonsterCategory(header) {
   const panel = header.closest('.monster-category-panel');
   panel.classList.toggle('open');
+}
+
+function toggleSubcategory(titleEl) {
+  const section = titleEl.closest('.subcategory-section');
+  const tableWrap = section.querySelector('.index-table-wrap');
+  const toggleIcon = titleEl.querySelector('.sub-toggle');
+  if (tableWrap) {
+    if (tableWrap.style.display === 'none') {
+      tableWrap.style.display = '';
+      if (toggleIcon) toggleIcon.textContent = '▼';
+    } else {
+      tableWrap.style.display = 'none';
+      if (toggleIcon) toggleIcon.textContent = '▶';
+    }
+  }
 }
 
 function renderIndexTable(data, cfg) {
